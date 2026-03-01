@@ -1,4 +1,4 @@
-package ru.asmelnikov.liquidshopper.ui.theme
+package ru.asmelnikov.liquidshopper.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

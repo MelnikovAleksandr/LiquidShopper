@@ -1,4 +1,4 @@
-package ru.asmelnikov.liquidshopper
+package ru.asmelnikov.liquidshopper.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,11 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import ru.asmelnikov.liquidshopper.ui.theme.LiquidShopperTheme
+import ru.asmelnikov.liquidshopper.presentation.tasks.TasksScreen
+import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,28 +18,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             LiquidShopperTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    TasksScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    LiquidShopperTheme {
-        Greeting("Android")
     }
 }

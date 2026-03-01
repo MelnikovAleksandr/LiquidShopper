@@ -1,4 +1,4 @@
-package ru.asmelnikov.liquidshopper.ui.theme
+package ru.asmelnikov.liquidshopper.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

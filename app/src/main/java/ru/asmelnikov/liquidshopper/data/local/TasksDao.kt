@@ -14,7 +14,7 @@ import ru.asmelnikov.liquidshopper.data.models.TaskWithItems
 interface TasksDao {
 
     @Transaction
-    @Query("SELECT * FROM taskentity")
+    @Query("SELECT * FROM taskentity ORDER BY timeStamp DESC")
     fun getAllTasksWithItemsFlow(): Flow<List<TaskWithItems>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

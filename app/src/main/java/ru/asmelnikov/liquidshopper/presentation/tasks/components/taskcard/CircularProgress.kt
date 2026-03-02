@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
+import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 
 @Composable
 fun CircularProgress(
@@ -64,11 +65,11 @@ fun CircularProgress(
             progress = { animatedCurrentProgress },
             color = MaterialTheme.colorScheme.primary,
             trackColor = MaterialTheme.colorScheme.secondary,
-            strokeWidth = 8.dp
+            strokeWidth = dimens.small1
         )
 
         BasicText(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(dimens.small3),
             text = "${completedItemCount}/${allItemsCount}",
             style = MaterialTheme.typography.labelMedium,
             color = ColorProducer {

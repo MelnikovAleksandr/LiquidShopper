@@ -62,7 +62,7 @@ fun ScaleButtonRow(
                 enabled = enabled
             )
             .liquid(liquidState, liquidParams()),
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically,
         content = content
     )
@@ -110,3 +110,10 @@ data class LiquidParams(
         shape = this@LiquidParams.shape
     }
 }
+
+//refraction = 0.5f
+//curve = 0.4f
+//saturation = 1.0f
+//dispersion = 1.0f
+//edge = 0.15f
+//shape = CircleShape

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -60,7 +61,7 @@ fun TaskCard(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    Column(
+    Box(
         modifier = modifier
             .clickable(
                 onClick = {},
@@ -79,9 +80,6 @@ fun TaskCard(
                     )
                 )
             )
-        ,
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -104,7 +102,9 @@ fun TaskCard(
 
             CircularProgress(
                 modifier = Modifier
-                    .padding(start = dimens.small3, bottom = dimens.small1),
+                    .padding(start = dimens.small3)
+                    .padding(vertical = dimens.small1)
+                ,
                 allItemsCount = task.items.count(),
                 completedItemCount = task.items.count { it.bought }
             )
@@ -150,7 +150,7 @@ fun TaskCard(
                     DropDown(
                         modifier = modifier,
                         liquidState = liquidState,
-                        liquidParams = LiquidParams(),
+                        liquidParams = LiquidParams().copy(dispersion = 1f),
                         expanded = expanded,
                         onDismiss = {
                             expanded = false
@@ -198,7 +198,7 @@ private fun TaskCardPreview() {
             TaskCard(
                 task = Task(
                     uid = 1377,
-                    taskName = "Test name of Task for Preview",
+                    taskName = "Test name of Task",
                     taskType = TaskTypes.ALCOHOL,
                     timeStamp = LocalDateTime.now(),
                     items = listOf(

@@ -8,7 +8,6 @@ import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,35 +21,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.node.DelegatableNode
@@ -75,8 +64,10 @@ import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.LiquidParams
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.ScaleButtonBox
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.taskcard.TaskCard
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.taskmodal.TaskModal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -97,193 +88,39 @@ fun TasksScreen(
 
     TasksScreenContent(
         state = state,
-        insertTask = {
-            viewModel.insertTask(
-                Task(
-                    uid = UUID.randomUUID().hashCode(),
-                    taskName = it,
-                    taskType = TaskTypes.OTHER,
-                    timeStamp = LocalDateTime.now(),
-                    items = listOf()
-                )
-            )
-        },
-        onDeleteTask = viewModel::deleteTask
+        onDeleteTask = viewModel::deleteTask,
+        onDismissModal = viewModel::onModalDismiss,
+        onCreateClick = viewModel::onCreateClick,
+        onTitleChange = viewModel::onTitleChange,
+        onTypeChange = viewModel::onTaskTypeChange,
+        onTaskCreateConfirm = viewModel::onConfirmCreateClick
     )
 
 }
 
-
-
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TasksScreenContent(
     state: TasksState,
-    insertTask: (String) -> Unit,
-    onDeleteTask: (Task) -> Unit
+    onDeleteTask: (Task) -> Unit,
+    onDismissModal: () -> Unit,
+    onCreateClick: () -> Unit,
+    onTitleChange: (String) -> Unit,
+    onTypeChange: (TaskTypes) -> Unit,
+    onTaskCreateConfirm: () -> Unit,
 ) {
     val scrollState = rememberLazyListState()
-
-    var isModalShow by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    var text1 by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var text2 by rememberSaveable {
-        mutableStateOf("")
-    }
-
     val liquidState = rememberLiquidState()
 
-    if (isModalShow) {
-        val sheetState = rememberModalBottomSheetState()
-        val scope = rememberCoroutineScope()
-
-        ModalBottomSheet(
-            modifier = Modifier,
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-            sheetState = sheetState,
-            onDismissRequest = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        isModalShow = false
-                        text1 = ""
-                        text2 = ""
-                    }
-                }
-            }
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(start = 12.dp)
-                        .padding(top = 18.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    IconButton(
-                        modifier = Modifier
-                            .liquid(liquidState) {
-                                refraction = 0.5f
-                                curve = 0.4f
-                                saturation = 1.0f
-                                dispersion = 1.0f
-                                edge = 0.15f
-                                shape = CircleShape
-                            },
-                        onClick = {
-                            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    isModalShow = false
-                                    text1 = ""
-                                    text2 = ""
-                                }
-                            }
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "",
-                            tint = Color.White.copy(alpha = 0.54f)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .liquid(liquidState) {
-                            refraction = 0.5f
-                            curve = 0.4f
-                            saturation = 1.0f
-                            dispersion = 1.0f
-                            edge = 0.15f
-                            shape = RoundedCornerShape(8.dp)
-                        },
-                    value = text1,
-                    onValueChange = {
-                        text1 = it
-                    },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .liquid(liquidState) {
-                            refraction = 0.5f
-                            curve = 0.4f
-                            saturation = 1.0f
-                            dispersion = 1.0f
-                            edge = 0.15f
-                            shape = RoundedCornerShape(8.dp)
-                        },
-                    value = text2,
-                    onValueChange = {
-                        text2 = it
-                    },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                IconButton(
-                    modifier = Modifier
-                        .liquid(liquidState) {
-                            refraction = 0.5f
-                            curve = 0.4f
-                            saturation = 1.0f
-                            dispersion = 1.0f
-                            edge = 0.15f
-                            shape = CircleShape
-                        },
-                    shape = CircleShape,
-                    onClick = {
-                        scope.launch {
-                            scrollState.animateScrollToItem(0)
-                        }
-                        scope.launch { sheetState.hide() }.invokeOnCompletion {
-                            if (!sheetState.isVisible) {
-                                isModalShow = false
-                                text1 = ""
-                                text2 = ""
-                            }
-                        }
-                        insertTask(text1)
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(32.dp),
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "add"
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        }
-    }
+    TaskModal(
+        state = state,
+        liquidState = liquidState,
+        liquidParams = LiquidParams(),
+        scrollState = scrollState,
+        onTypeChange = onTypeChange,
+        onDismissRequest = onDismissModal,
+        onTitleChange = onTitleChange,
+        onTaskCreateConfirm = onTaskCreateConfirm
+    )
 
     Box(
         modifier = Modifier
@@ -418,9 +255,8 @@ fun TasksScreenContent(
                 .padding(24.dp)
                 .size(80.dp),
             liquidState = liquidState,
-            onClick = {
-                isModalShow = !isModalShow
-            }) {
+            onClick = onCreateClick
+        ) {
             Icon(
                 modifier = Modifier.size(48.dp),
                 imageVector = Icons.Filled.Add,

@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.ime
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
             val appState = rememberAppState()
             LiquidShopperTheme {
                 Scaffold(
-                    contentWindowInsets = WindowInsets.navigationBars,
+                    contentWindowInsets = WindowInsets.ime,
                     modifier = Modifier.fillMaxSize(),
                     containerColor = MaterialTheme.colorScheme.background,
                     snackbarHost = {
@@ -50,6 +50,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setStatusBarBackground() {
-        window.statusBarColor = resources.getColor(R.color.white, theme)
+        window.statusBarColor = resources.getColor(R.color.status_bar_background, theme)
     }
 }

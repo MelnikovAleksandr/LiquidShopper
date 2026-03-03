@@ -1,77 +1,81 @@
 package ru.asmelnikov.liquidshopper.presentation.tasks
 
-import android.widget.FrameLayout
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.IndicationNodeFactory
-import androidx.compose.foundation.interaction.InteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.node.DelegatableNode
-import androidx.compose.ui.node.DrawModifierNode
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.net.toUri
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
+import com.kizitonwose.calendar.compose.ContentHeightMode
+import com.kizitonwose.calendar.compose.HorizontalCalendar
+import com.kizitonwose.calendar.compose.rememberCalendarState
+import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.core.daysOfWeek
+import com.kizitonwose.calendar.core.nextMonth
+import com.kizitonwose.calendar.core.previousMonth
+import com.kizitonwose.calendar.core.yearMonth
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.fletchmckee.liquid.liquefiable
 import io.github.fletchmckee.liquid.liquid
 import io.github.fletchmckee.liquid.rememberLiquidState
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.asmelnikov.liquidshopper.R
+import ru.asmelnikov.liquidshopper.domain.models.GroupedTasksByDay
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
-import ru.asmelnikov.liquidshopper.presentation.tasks.components.LiquidParams
-import ru.asmelnikov.liquidshopper.presentation.tasks.components.ScaleButtonBox
-import ru.asmelnikov.liquidshopper.presentation.tasks.components.taskcard.TaskCard
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.ChoseMonthDialog
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.Day
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.MonthsCalendarTitle
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.TasksList
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.rememberFirstCompletelyVisibleMonth
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.taskmodal.TaskModal
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.UUID
-
+import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksState
+import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksViewModel
+import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
+import ru.asmelnikov.liquidshopper.presentation.theme.dimens
+import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
+import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.isPortrait
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.YearMonth
 
 @Composable
 fun TasksScreen(
@@ -93,7 +97,12 @@ fun TasksScreen(
         onCreateClick = viewModel::onCreateClick,
         onTitleChange = viewModel::onTitleChange,
         onTypeChange = viewModel::onTaskTypeChange,
-        onTaskCreateConfirm = viewModel::onConfirmCreateClick
+        onTaskCreateConfirm = viewModel::onConfirmCreateClick,
+        onSelectedDayChange = viewModel::onSelectedDayChange,
+        onTimeStampChange = viewModel::onTimeStampChange,
+        onDismissMonthDialog = viewModel::onDismissMonthDialog,
+        onMonthDialogShow = viewModel::onMonthDialogShow,
+        isPortrait = isPortrait()
     )
 
 }
@@ -107,250 +116,337 @@ fun TasksScreenContent(
     onTitleChange: (String) -> Unit,
     onTypeChange: (TaskTypes) -> Unit,
     onTaskCreateConfirm: () -> Unit,
+    onSelectedDayChange: (LocalDate) -> Unit,
+    onTimeStampChange: (LocalTime) -> Unit,
+    onDismissMonthDialog: () -> Unit,
+    onMonthDialogShow: () -> Unit,
+    isPortrait: Boolean
 ) {
     val scrollState = rememberLazyListState()
     val liquidState = rememberLiquidState()
+    val hazeState = rememberHazeState()
+    val currentMonth = remember { YearMonth.now() }
+    val startMonth = remember { currentMonth.minusMonths(300) }
+    val endMonth = remember { currentMonth.plusMonths(300) }
+    val daysOfWeek = remember { daysOfWeek() }
+
+    val calendarState = rememberCalendarState(
+        startMonth = startMonth,
+        endMonth = endMonth,
+        firstVisibleMonth = currentMonth,
+        firstDayOfWeek = daysOfWeek.first(),
+    )
+    val coroutineScope = rememberCoroutineScope()
+    val visibleMonth = rememberFirstCompletelyVisibleMonth(calendarState)
+    val selectedDayTasks = produceState<GroupedTasksByDay?>(
+        initialValue = null,
+        key1 = state.tasks,
+        key2 = state.selectedDay
+    ) {
+        value = withContext(Dispatchers.IO) {
+            state.tasks.find { it.start == state.selectedDay }
+        }
+    }.value
+
+    ChoseMonthDialog(
+        modifier = Modifier,
+        state = state,
+        onDismissRequest = onDismissMonthDialog,
+        liquidState = liquidState,
+        chosenMonth = { date ->
+            coroutineScope.launch {
+                calendarState.animateScrollToMonth(date.yearMonth)
+            }
+            onSelectedDayChange(date)
+        }
+    )
 
     TaskModal(
         state = state,
         liquidState = liquidState,
         liquidParams = LiquidParams(),
-        scrollState = scrollState,
         onTypeChange = onTypeChange,
         onDismissRequest = onDismissModal,
         onTitleChange = onTitleChange,
-        onTaskCreateConfirm = onTaskCreateConfirm
+        onTaskCreateConfirm = onTaskCreateConfirm,
+        onTimeStampChange = onTimeStampChange
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
 
-        VideoBackground(
-            videoResId = R.raw.back_video,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        LazyColumn(
+        Image(
+            painter = painterResource(R.drawable.main_back),
+            contentDescription = null,
             modifier = Modifier
                 .liquefiable(liquidState)
-                .fillMaxSize(),
-            state = scrollState,
-            verticalArrangement = Arrangement.spacedBy(26.dp)
-        ) {
-            item {
-                Spacer(
-                    modifier = Modifier
-                        .statusBarsPadding()
-                        .height(80.dp)
-                )
-            }
+                .hazeSource(state = hazeState)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentScale = ContentScale.Crop
+        )
 
-
-            items(items = state.tasks, key = { it.uid }) { task ->
-                TaskCard(
-                    modifier = Modifier.animateItem(),
+        if (isPortrait) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                MonthsCalendarTitle(
+                    modifier = Modifier,
+                    currentMonth = visibleMonth.yearMonth,
                     liquidState = liquidState,
-                    task = task,
-                    onShareTask = {},
-                    onEditTask = {},
-                    onDeleteTask = {
-                        onDeleteTask(task)
-                    }
-                )
-            }
-            item {
-                Spacer(
-                    modifier = Modifier
-                        .height((24 + 80).dp)
-                        .navigationBarsPadding()
-                )
-            }
-
-        }
-
-        Row(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .statusBarsPadding()
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                modifier = Modifier
-
-                    .liquid(liquidState) {
-                        refraction = 0.5f
-                        curve = 0.4f
-                        saturation = 1.0f
-                        dispersion = 0f
-                        edge = 0.07f
-                        shape = CircleShape
-                    }
-                    .size(80.dp),
-                shape = CircleShape,
-                onClick = {
-
-                }
-            ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "add"
-                )
-            }
-            IconButton(
-                modifier = Modifier
-
-                    .liquid(liquidState) {
-                        refraction = 0.5f
-                        curve = 0.4f
-                        saturation = 1.0f
-                        dispersion = 0f
-                        edge = 0.07f
-                        shape = CircleShape
-                    }
-                    .size(80.dp),
-                shape = CircleShape,
-                onClick = {
-
-                }
-            ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    imageVector = Icons.Filled.Build,
-                    contentDescription = "add"
-                )
-            }
-            IconButton(
-                modifier = Modifier
-                    .size(80.dp)
-                    .liquid(liquidState) {
-                        refraction = 0.5f
-                        curve = 0.4f
-                        saturation = 1.0f
-                        dispersion = 0f
-                        edge = 0.07f
-                        shape = CircleShape
+                    goToPrevious = {
+                        coroutineScope.launch {
+                            calendarState.animateScrollToMonth(calendarState.firstVisibleMonth.yearMonth.previousMonth)
+                        }
                     },
-                shape = CircleShape,
-                onClick = {
+                    goToNext = {
+                        coroutineScope.launch {
+                            calendarState.animateScrollToMonth(calendarState.firstVisibleMonth.yearMonth.nextMonth)
+                        }
+                    },
+                    onMonthDialogShow = onMonthDialogShow
+                )
 
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.5f)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f))
+                            .hazeEffect(state = hazeState, style = HazeStyle.Unspecified)
+                    )
+
+                    HorizontalCalendar(
+                        modifier = Modifier
+                            .matchParentSize(),
+                        contentHeightMode = ContentHeightMode.Fill,
+                        state = calendarState,
+                        dayContent = { day ->
+                            var currentDayTasks by remember {
+                                mutableStateOf<GroupedTasksByDay?>(
+                                    null
+                                )
+                            }
+                            LaunchedEffect(key1 = state.tasks, key2 = day) {
+                                withContext(Dispatchers.IO) {
+                                    currentDayTasks = if (day.position == DayPosition.MonthDate) {
+                                        state.tasks.find { taskByDay ->
+                                            taskByDay.start == day.date
+                                        }
+                                    } else {
+                                        null
+                                    }
+                                }
+                            }
+                            Day(
+                                modifier = Modifier,
+                                day = day,
+                                groupedTasks = currentDayTasks,
+                                onClick = onSelectedDayChange,
+                                liquidState = liquidState
+                            )
+                            androidx.compose.animation.AnimatedVisibility(
+                                modifier = Modifier.align(Alignment.Center),
+                                enter = scaleIn(),
+                                exit = scaleOut(),
+                                visible = day.date == state.selectedDay
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .liquid(
+                                            liquidState, LiquidParams(
+                                                refraction = 0.3f,
+                                                edge = 0.2f,
+                                                shape = MaterialTheme.shapes.large
+                                            ).invoke()
+                                        )
+                                        .aspectRatio(1f)
+                                        .fillMaxSize()
+                                        .clip(MaterialTheme.shapes.large)
+                                )
+                            }
+                        }
+                    )
                 }
+                TasksList(
+                    liquidState = liquidState,
+                    scrollState = scrollState,
+                    hazeState = hazeState,
+                    state = state,
+                    selectedDayTasks = selectedDayTasks,
+                    onDeleteTask = onDeleteTask,
+                    isPortrait = true
+                )
+
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxSize()
             ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = "add"
+                Column(modifier = Modifier.weight(1f)) {
+                    MonthsCalendarTitle(
+                        modifier = Modifier,
+                        currentMonth = visibleMonth.yearMonth,
+                        liquidState = liquidState,
+                        goToPrevious = {
+                            coroutineScope.launch {
+                                calendarState.animateScrollToMonth(calendarState.firstVisibleMonth.yearMonth.previousMonth)
+                            }
+                        },
+                        goToNext = {
+                            coroutineScope.launch {
+                                calendarState.animateScrollToMonth(calendarState.firstVisibleMonth.yearMonth.nextMonth)
+                            }
+                        },
+                        onMonthDialogShow = onMonthDialogShow
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f))
+                                .hazeEffect(state = hazeState, style = HazeStyle.Unspecified)
+                        )
+
+                        HorizontalCalendar(
+                            modifier = Modifier
+                                .matchParentSize(),
+                            contentHeightMode = ContentHeightMode.Fill,
+                            state = calendarState,
+                            dayContent = { day ->
+                                var currentDayTasks by remember {
+                                    mutableStateOf<GroupedTasksByDay?>(
+                                        null
+                                    )
+                                }
+                                LaunchedEffect(key1 = state.tasks, key2 = day) {
+                                    withContext(Dispatchers.IO) {
+                                        currentDayTasks =
+                                            if (day.position == DayPosition.MonthDate) {
+                                                state.tasks.find { taskByDay ->
+                                                    taskByDay.start == day.date
+                                                }
+                                            } else {
+                                                null
+                                            }
+                                    }
+                                }
+                                Day(
+                                    modifier = Modifier,
+                                    day = day,
+                                    groupedTasks = currentDayTasks,
+                                    onClick = onSelectedDayChange,
+                                    liquidState = liquidState
+                                )
+                                androidx.compose.animation.AnimatedVisibility(
+                                    modifier = Modifier.align(Alignment.Center),
+                                    enter = scaleIn(),
+                                    exit = scaleOut(),
+                                    visible = day.date == state.selectedDay && day.position == DayPosition.MonthDate
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .liquid(
+                                                liquidState, LiquidParams(
+                                                    refraction = 0.3f,
+                                                    edge = 0.2f,
+                                                    shape = MaterialTheme.shapes.large
+                                                ).invoke()
+                                            )
+                                            .aspectRatio(1f)
+                                            .fillMaxSize()
+                                            .clip(MaterialTheme.shapes.large)
+                                    )
+                                }
+                            }
+                        )
+                    }
+                }
+                TasksList(
+                    modifier = Modifier
+                        .weight(1f),
+                    liquidState = liquidState,
+                    scrollState = scrollState,
+                    hazeState = hazeState,
+                    state = state,
+                    selectedDayTasks = selectedDayTasks,
+                    onDeleteTask = onDeleteTask,
+                    isPortrait = false
                 )
             }
-
         }
 
-        ScaleButtonBox(
+        AnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(24.dp)
-                .size(80.dp),
-            liquidState = liquidState,
-            onClick = onCreateClick
+                .padding(24.dp),
+            enter = scaleIn(),
+            exit = scaleOut(),
+            visible = !scrollState.isScrollInProgress && !state.isModalShow
         ) {
-            Icon(
-                modifier = Modifier.size(48.dp),
-                imageVector = Icons.Filled.Add,
-                contentDescription = "add"
-            )
-        }
-
-    }
-}
-
-fun LocalDateTime.toFormattedString(): String {
-    val formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")
-    return this.format(formatter)
-}
-
-@androidx.annotation.OptIn(UnstableApi::class)
-@Composable
-fun VideoBackground(
-    videoResId: Int,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri("android.resource://${context.packageName}/$videoResId".toUri()))
-            repeatMode = Player.REPEAT_MODE_ONE
-            volume = 0f
-            playWhenReady = true
-            prepare()
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose { exoPlayer.release() }
-    }
-
-    AndroidView(
-        factory = {
-            PlayerView(it).apply {
-                player = exoPlayer
-                useController = false
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
+            ScaleButtonBox(
+                modifier = Modifier.size(if (isPortrait()) dimens.large else dimens.regular),
+                liquidState = liquidState,
+                onClick = onCreateClick
+            ) {
+                Icon(
+                    modifier = Modifier.size(dimens.medium4),
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "add",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
-        },
-        modifier = modifier
-    )
-}
-
-object ScaleIndication : IndicationNodeFactory {
-    override fun create(interactionSource: InteractionSource): DelegatableNode {
-        return ScaleNode(interactionSource)
-    }
-
-    override fun equals(other: Any?): Boolean = other === ScaleIndication
-    override fun hashCode() = 100
-}
-
-private class ScaleNode(private val interactionSource: InteractionSource) :
-    Modifier.Node(), DrawModifierNode {
-
-    var currentPressPosition: Offset = Offset.Zero
-    val animatedScalePercent = Animatable(1f)
-
-    private suspend fun animateToPressed(pressPosition: Offset) {
-        currentPressPosition = pressPosition
-        animatedScalePercent.animateTo(0.8f, spring())
-    }
-
-    private suspend fun animateToResting() {
-        animatedScalePercent.animateTo(1f, spring())
-    }
-
-    override fun onAttach() {
-        coroutineScope.launch {
-            interactionSource.interactions.collectLatest { interaction ->
-                when (interaction) {
-                    is PressInteraction.Press -> animateToPressed(interaction.pressPosition)
-                    is PressInteraction.Release -> animateToResting()
-                    is PressInteraction.Cancel -> animateToResting()
-                }
-            }
         }
     }
+}
 
-    override fun ContentDrawScope.draw() {
-        scale(
-            scale = animatedScalePercent.value,
-            pivot = currentPressPosition
-        ) {
-            this@draw.drawContent()
-        }
+@Preview
+@Composable
+private fun CalendarPreview1() {
+    LiquidShopperTheme(darkTheme = true) {
+        TasksScreenContent(
+            state = TasksState(),
+            onDeleteTask = {},
+            onDismissModal = {},
+            onCreateClick = {},
+            onTitleChange = {},
+            onTypeChange = {},
+            onTaskCreateConfirm = {},
+            onSelectedDayChange = {},
+            onTimeStampChange = {},
+            onDismissMonthDialog = {},
+            onMonthDialogShow = {},
+            isPortrait = true
+        )
+    }
+}
+
+@Preview(
+    showSystemUi = true,
+    device = "spec:width=411dp,height=891dp,dpi=420,isRound=false,chinSize=0dp,orientation=landscape"
+)
+@Composable
+private fun CalendarPreview2() {
+    LiquidShopperTheme(darkTheme = true) {
+        TasksScreenContent(
+            state = TasksState(),
+            onDeleteTask = {},
+            onDismissModal = {},
+            onCreateClick = {},
+            onTitleChange = {},
+            onTypeChange = {},
+            onTaskCreateConfirm = {},
+            onSelectedDayChange = {},
+            onTimeStampChange = {},
+            onDismissMonthDialog = {},
+            onMonthDialogShow = {},
+            isPortrait = false
+        )
     }
 }

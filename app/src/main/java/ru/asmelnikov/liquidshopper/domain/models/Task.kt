@@ -3,13 +3,23 @@ package ru.asmelnikov.liquidshopper.domain.models
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import ru.asmelnikov.liquidshopper.R
+import java.time.LocalDate
 import java.time.LocalDateTime
+
+data class GroupedTasksByDay(
+    val start: LocalDate,
+    val tasksCount: Int,
+    val tasks: List<Task>
+)
 
 data class Task(
     val uid: Int,
     val taskName: String,
     val taskType: TaskTypes,
     val timeStamp: LocalDateTime,
+    val isCompleted: Boolean,
+    val allItemsCount: Int,
+    val inProgressItemsCount: Int,
     val items: List<Item>
 )
 

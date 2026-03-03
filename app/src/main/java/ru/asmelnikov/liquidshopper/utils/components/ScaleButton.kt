@@ -1,4 +1,4 @@
-package ru.asmelnikov.liquidshopper.presentation.tasks.components
+package ru.asmelnikov.liquidshopper.utils.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Shape
 import io.github.fletchmckee.liquid.LiquidScope
 import io.github.fletchmckee.liquid.LiquidState
 import io.github.fletchmckee.liquid.liquid
-import ru.asmelnikov.liquidshopper.presentation.tasks.ScaleIndication
+import ru.asmelnikov.liquidshopper.utils.components.scaleindication.ScaleIndication
 
 @Composable
 fun ScaleButtonBox(

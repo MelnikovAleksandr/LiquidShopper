@@ -1,4 +1,4 @@
-package ru.asmelnikov.liquidshopper.presentation.tasks
+package ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel
 
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -6,7 +6,8 @@ import org.orbitmvi.orbit.viewmodel.container
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import ru.asmelnikov.liquidshopper.domain.repository.TasksRepository
-import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.UUID
 
 class TasksViewModel(
@@ -36,7 +37,7 @@ class TasksViewModel(
                 title = "",
                 taskType = TaskTypes.OTHER,
                 emptyTitleError = false,
-                successCreate = false
+                selectedTime = LocalTime.now()
             )
         }
     }
@@ -59,11 +60,30 @@ class TasksViewModel(
                 uid = UUID.randomUUID().hashCode(),
                 taskName = state.title,
                 taskType = state.taskType,
-                timeStamp = LocalDateTime.now(),
+                isCompleted = false,
+                allItemsCount = 0,
+                inProgressItemsCount = 0,
+                timeStamp = state.selectedDay.atTime(state.selectedTime),
                 items = emptyList()
             )
         )
-        reduce { state.copy(successCreate = true) }
+        onModalDismiss()
+    }
+
+    fun onSelectedDayChange(day: LocalDate) = intent {
+        reduce { state.copy(selectedDay = day) }
+    }
+
+    fun onTimeStampChange(time: LocalTime) = intent {
+        reduce { state.copy(selectedTime = time) }
+    }
+
+    fun onMonthDialogShow() = intent {
+        reduce { state.copy(isShowSelectMonthDialog = true) }
+    }
+
+    fun onDismissMonthDialog() = intent {
+        reduce { state.copy(isShowSelectMonthDialog = false) }
     }
 
     private fun subscribeTasks() = intent {

@@ -82,14 +82,22 @@ dependencies {
 
     // liquid
     implementation(libs.liquid)
+    implementation(libs.haze)
 
     // room
     implementation(libs.room)
     implementation(libs.room.ktx)
     ksp(libs.room.codegen)
 
-    implementation("androidx.media3:media3-exoplayer:1.2.1")
-    implementation("androidx.media3:media3-ui:1.2.1")
+    // player
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+
+    // calendar
+    implementation(libs.calendar)
+
+    // picker
+    implementation(libs.wheelpickercompose)
 
     // test
     testImplementation(libs.junit)

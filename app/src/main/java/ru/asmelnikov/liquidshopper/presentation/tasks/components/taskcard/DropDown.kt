@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.fletchmckee.liquid.LiquidState
 import io.github.fletchmckee.liquid.liquid
-import ru.asmelnikov.liquidshopper.presentation.tasks.components.LiquidParams
+import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.TaskDropDown
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 

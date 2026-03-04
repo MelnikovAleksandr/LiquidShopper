@@ -56,11 +56,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
+import org.orbitmvi.orbit.compose.collectSideEffect
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.GroupedTasksByDay
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
+import ru.asmelnikov.liquidshopper.presentation.navigation.Routes
+import ru.asmelnikov.liquidshopper.presentation.navigation.navigate
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.ChoseMonthDialog
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.Day
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.MonthsCalendarTitle
@@ -68,6 +71,7 @@ import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.TasksL
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.rememberFirstCompletelyVisibleMonth
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.edittaskmodal.EditTaskModal
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.newtaskmodal.NewTaskModal
+import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksSideEffects
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksState
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksViewModel
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
@@ -94,6 +98,14 @@ fun TasksScreen(
     val context = LocalContext.current
     val state by viewModel.container.stateFlow.collectAsState()
 
+    viewModel.collectSideEffect {
+        when (it) {
+            is TasksSideEffects.NavigateToDetails -> {
+                appState.navigate(route = Routes.ItemsScreen(taskId = it.taskId))
+            }
+        }
+    }
+
     TasksScreenContent(
         state = state,
         onDeleteTask = viewModel::deleteTask,
@@ -115,6 +127,7 @@ fun TasksScreen(
         onTaskShare = { task ->
             viewModel.onTaskShare(task = task, context = context)
         },
+        onDetails = viewModel::navigateToDetails,
         isPortrait = isPortrait()
     )
 
@@ -140,6 +153,7 @@ fun TasksScreenContent(
     onEditTimeStampChange: (LocalDateTime) -> Unit,
     onTaskUpdateConfirm: () -> Unit,
     onTaskShare: (Task) -> Unit,
+    onDetails: (Int) -> Unit,
     isPortrait: Boolean
 ) {
     val scrollState = rememberLazyListState()
@@ -308,6 +322,7 @@ fun TasksScreenContent(
                     onDeleteTask = onDeleteTask,
                     onShareTask = onTaskShare,
                     onEditDialogShow = onEditDialogShow,
+                    onDetails = onDetails,
                     isPortrait = true
                 )
 
@@ -410,6 +425,7 @@ fun TasksScreenContent(
                     onDeleteTask = onDeleteTask,
                     onShareTask = onTaskShare,
                     onEditDialogShow = onEditDialogShow,
+                    onDetails = onDetails,
                     isPortrait = false
                 )
             }
@@ -462,6 +478,7 @@ private fun CalendarPreview1() {
             onEditTimeStampChange = {},
             onTaskUpdateConfirm = {},
             onTaskShare = {},
+            onDetails = {},
             isPortrait = true
         )
     }
@@ -493,6 +510,7 @@ private fun CalendarPreview2() {
             onEditTimeStampChange = {},
             onTaskUpdateConfirm = {},
             onTaskShare = {},
+            onDetails = {},
             isPortrait = false
         )
     }

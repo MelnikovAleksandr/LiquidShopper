@@ -55,6 +55,7 @@ fun TasksList(
     onDeleteTask: (Task) -> Unit,
     onEditDialogShow: (Task) -> Unit,
     onShareTask: (Task) -> Unit,
+    onDetails: (Int) -> Unit,
     isPortrait: Boolean
 ) {
 
@@ -137,7 +138,8 @@ fun TasksList(
                     task = task,
                     onShareTask = onShareTask,
                     onEditTask = onEditDialogShow,
-                    onDeleteTask = onDeleteTask
+                    onDeleteTask = onDeleteTask,
+                    onDetails = onDetails
                 )
             }
         }

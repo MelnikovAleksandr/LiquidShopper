@@ -6,8 +6,11 @@ import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlinx.parcelize.Parcelize
+import android.os.Parcelable
 
 @Immutable
+@Parcelize
 data class TasksState(
     val tasks: List<GroupedTasksByDay> = emptyList(),
     val title: String = "",
@@ -23,4 +26,8 @@ data class TasksState(
     val editType: TaskTypes = TaskTypes.OTHER,
     val editDateTime: LocalDateTime = LocalDateTime.now(),
     val emptyEditTitleError: Boolean = false
-)
+): Parcelable
+
+sealed class TasksSideEffects {
+    data class NavigateToDetails(val taskId: Int) : TasksSideEffects()
+}

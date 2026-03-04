@@ -35,4 +35,30 @@
     <string name="category_children">Для детей</string>
     <string name="category_automotive">Автомобиль</string>
     <string name="category_other">Прочее</string>
+
+    <!--    Units-->
+    <string name="unit_pcs">ШТ</string>
+    <string name="unit_kg">КГ</string>
+    <string name="unit_g">ГР</string>
+    <string name="unit_t">ТН</string>
+    <string name="unit_l">Л</string>
+    <string name="unit_ml">МЛ</string>
+    <string name="unit_bottle">БУТ</string>
+    <string name="unit_pack">УП</string>
+    <string name="unit_box">КОР</string>
+    <string name="unit_packet">ПАЧ</string>
+    <string name="unit_set">НАБ</string>
+    <string name="unit_pair">ПАР</string>
+    <string name="unit_sheet">ЛИСТ</string>
+    <string name="unit_roll">РУЛ</string>
+    <string name="unit_m">М</string>
+    <string name="unit_m2">М2</string>
+    <string name="unit_m3">М3</string>
+    <string name="unit_cm">СМ</string>
+    <string name="unit_cm2">СМ2</string>
+    <string name="unit_cm3">СМ3</string>
+    <string name="unit_linear_m">ПГ М</string>
+    <string name="unit_hour">Ч</string>
+    <string name="unit_day">СУТ</string>
+    <string name="unit_minute">МИН</string>
 </resources>

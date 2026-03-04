@@ -1,8 +1,7 @@
 package ru.asmelnikov.liquidshopper.presentation.navigation
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -13,6 +12,7 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import ru.asmelnikov.liquidshopper.presentation.details.ItemsScreen
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
 import ru.asmelnikov.liquidshopper.presentation.tasks.TasksScreen
 
@@ -27,17 +27,9 @@ fun NavGraph(
         actionPerformed: () -> Unit
     ) -> Unit
 ) {
-
     NavDisplay(
         modifier = Modifier.padding(paddingValues),
         backStack = appState.backStack,
-        transitionSpec = {
-            fadeIn(tween(300)) togetherWith fadeOut(tween(300))
-        },
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator()
-        ),
         entryProvider = entryProvider {
             entry<Routes.TasksScreen> {
                 TasksScreen(
@@ -47,8 +39,28 @@ fun NavGraph(
             }
 
             entry<Routes.ItemsScreen> {
-
+                ItemsScreen(
+                    appState = appState,
+                    showSnackbar = showSnackbar,
+                    taskId = it.taskId
+                )
             }
-        }
+        },
+        transitionSpec = {
+            slideInHorizontally(initialOffsetX = { it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { -it })
+        },
+        popTransitionSpec = {
+            slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { it })
+        },
+        predictivePopTransitionSpec = {
+            slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { it })
+        },
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator()
+        )
     )
 }

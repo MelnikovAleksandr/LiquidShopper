@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,6 +58,7 @@ fun TaskCard(
     onShareTask: (Task) -> Unit,
     onEditTask: (Task) -> Unit,
     onDeleteTask: (Task) -> Unit,
+    onDetails: (Int) -> Unit,
     interactionSource: MutableInteractionSource? = null
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -66,7 +66,9 @@ fun TaskCard(
     Box(
         modifier = modifier
             .clickable(
-                onClick = {},
+                onClick = {
+                    onDetails(task.uid)
+                },
                 indication = ScaleIndication,
                 interactionSource = interactionSource,
                 enabled = true
@@ -191,7 +193,8 @@ private fun TaskCardPreview() {
                 liquidState = rememberLiquidState(),
                 onShareTask = {},
                 onEditTask = {},
-                onDeleteTask = {}
+                onDeleteTask = {},
+                onDetails = {}
             )
             Spacer(modifier = Modifier.height(8.dp))
             TaskCard(
@@ -203,7 +206,8 @@ private fun TaskCardPreview() {
                 liquidState = rememberLiquidState(),
                 onShareTask = {},
                 onEditTask = {},
-                onDeleteTask = {}
+                onDeleteTask = {},
+                onDetails = {}
             )
             Spacer(modifier = Modifier.height(8.dp))
         }

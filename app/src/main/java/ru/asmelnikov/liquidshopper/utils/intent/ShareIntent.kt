@@ -10,7 +10,7 @@ fun sharedTask(task: Task, context: Context) {
         Intent(Intent.ACTION_SEND).apply {
 
             val itemsListString =
-                "${task.taskName}:\n " + task.items.map { "${it.itemName} - ${it.count} ${it.units.lowercase()}\n" }
+                "${task.taskName}:\n " + task.items.map { "${it.itemName} - ${it.count} ${context.getString(it.units.stringRes)}\n" }
 
             type = "text/plain"
             putExtra(

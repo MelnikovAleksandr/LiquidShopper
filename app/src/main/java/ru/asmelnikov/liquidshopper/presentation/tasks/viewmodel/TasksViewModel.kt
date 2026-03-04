@@ -1,6 +1,7 @@
 package ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -14,11 +15,13 @@ import java.time.LocalTime
 import java.util.UUID
 
 class TasksViewModel(
-    private val tasksRepository: TasksRepository
-) : ViewModel(), ContainerHost<TasksState, Nothing> {
+    private val tasksRepository: TasksRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModel(), ContainerHost<TasksState, TasksSideEffects> {
 
-    override val container = container<TasksState, Nothing>(
-        initialState = TasksState()
+    override val container = container<TasksState, TasksSideEffects>(
+        initialState = TasksState(),
+        savedStateHandle = savedStateHandle
     )
 
     init {
@@ -152,6 +155,10 @@ class TasksViewModel(
 
     fun onTaskShare(task: Task, context: Context) = intent {
         sharedTask(task = task, context = context)
+    }
+
+    fun navigateToDetails(taskId: Int) = intent {
+        postSideEffect(TasksSideEffects.NavigateToDetails(taskId = taskId))
     }
 
     private fun subscribeTasks() = intent {

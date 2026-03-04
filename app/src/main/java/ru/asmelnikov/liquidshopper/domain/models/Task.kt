@@ -1,17 +1,21 @@
 package ru.asmelnikov.liquidshopper.domain.models
 
+import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import kotlinx.parcelize.Parcelize
 import ru.asmelnikov.liquidshopper.R
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@Parcelize
 data class GroupedTasksByDay(
     val start: LocalDate,
     val tasksCount: Int,
     val tasks: List<Task>
-)
+): Parcelable
 
+@Parcelize
 data class Task(
     val uid: Int,
     val taskName: String,
@@ -21,17 +25,18 @@ data class Task(
     val allItemsCount: Int,
     val inProgressItemsCount: Int,
     val items: List<Item>
-)
+): Parcelable
 
+@Parcelize
 data class Item(
     val uid: Int,
     val taskId: Int,
     val itemName: String,
     val count: Int,
     val price: Int,
-    val units: String,
+    val units: UnitType,
     val bought: Boolean
-)
+): Parcelable
 
 enum class TaskTypes(@StringRes val stringRes: Int, @DrawableRes val drawableRes: Int) {
     PHARMACY(R.string.category_pharmacy, R.drawable.medicine_ic),
@@ -52,4 +57,31 @@ enum class TaskTypes(@StringRes val stringRes: Int, @DrawableRes val drawableRes
     CHILDREN(R.string.category_children, R.drawable.baby_ic),
     AUTOMOTIVE(R.string.category_automotive, R.drawable.car_ic),
     OTHER(R.string.category_other, R.drawable.other_items_ic)
+}
+
+enum class UnitType(@StringRes val stringRes: Int) {
+    PIECES(R.string.unit_pcs),
+    KILOGRAM(R.string.unit_kg),
+    GRAM(R.string.unit_g),
+    TON(R.string.unit_t),
+    LITER(R.string.unit_l),
+    MILLILITER(R.string.unit_ml),
+    BOTTLE(R.string.unit_bottle),
+    PACK(R.string.unit_pack),
+    BOX(R.string.unit_box),
+    PACKET(R.string.unit_packet),
+    SET(R.string.unit_set),
+    PAIR(R.string.unit_pair),
+    SHEET(R.string.unit_sheet),
+    ROLL(R.string.unit_roll),
+    METER(R.string.unit_m),
+    SQUARE_METER(R.string.unit_m2),
+    CUBIC_METER(R.string.unit_m3),
+    CENTIMETER(R.string.unit_cm),
+    SQUARE_CENTIMETER(R.string.unit_cm2),
+    CUBIC_CENTIMETER(R.string.unit_cm3),
+    LINEAR_METER(R.string.unit_linear_m),
+    HOUR(R.string.unit_hour),
+    DAY(R.string.unit_day),
+    MINUTE(R.string.unit_minute)
 }

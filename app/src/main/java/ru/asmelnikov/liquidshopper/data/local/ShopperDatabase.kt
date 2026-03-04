@@ -15,4 +15,6 @@ abstract class ShopperDatabase: RoomDatabase() {
 
     abstract fun getTasksDao(): TasksDao
 
+    abstract fun getItemsDao(): ItemsDao
+
 }

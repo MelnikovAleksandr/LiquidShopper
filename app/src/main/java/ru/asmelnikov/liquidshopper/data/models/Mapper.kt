@@ -4,6 +4,7 @@ import ru.asmelnikov.liquidshopper.domain.models.GroupedTasksByDay
 import ru.asmelnikov.liquidshopper.domain.models.Item
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
+import ru.asmelnikov.liquidshopper.domain.models.UnitType
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -47,7 +48,19 @@ fun TaskItemEntity.toTaskItem() : Item {
         itemName = itemName,
         count = count,
         price = price,
-        units = units,
+        units = kotlin.runCatching { UnitType.valueOf(units) }.getOrDefault(UnitType.PIECES),
+        bought = bought
+    )
+}
+
+fun Item.toTaskItemEntity() : TaskItemEntity {
+    return TaskItemEntity(
+        uid = uid,
+        taskId = taskId,
+        itemName = itemName,
+        count = count,
+        price = price,
+        units = units.name,
         bought = bought
     )
 }

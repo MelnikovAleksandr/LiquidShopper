@@ -10,7 +10,7 @@ val taskItemsMock = listOf(
         itemName = "",
         count = 1,
         price = 1,
-        units = "",
+        units = UnitType.PIECES,
         bought = false
     ),
     Item(
@@ -19,7 +19,7 @@ val taskItemsMock = listOf(
         itemName = "",
         count = 1,
         price = 1,
-        units = "",
+        units = UnitType.PIECES,
         bought = true
     ),
     Item(
@@ -28,7 +28,7 @@ val taskItemsMock = listOf(
         itemName = "",
         count = 1,
         price = 1,
-        units = "",
+        units = UnitType.PIECES,
         bought = true
     ),
     Item(
@@ -37,7 +37,7 @@ val taskItemsMock = listOf(
         itemName = "",
         count = 1,
         price = 1,
-        units = "",
+        units = UnitType.PIECES,
         bought = true
     ),
     Item(
@@ -46,7 +46,7 @@ val taskItemsMock = listOf(
         itemName = "",
         count = 1,
         price = 1,
-        units = "",
+        units = UnitType.PIECES,
         bought = true
     )
 )

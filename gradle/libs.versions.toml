@@ -1,11 +1,13 @@
 [versions]
 agp = "8.12.3"
+datetimeWheelPicker = "1.1.0"
 haze = "1.7.2"
 kotlin = "2.3.10"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
+kotlinxDatetime = "0.7.1"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.4"
 composeBom = "2026.02.01"
@@ -23,12 +25,12 @@ liquid = "1.1.1"
 ksp = "2.3.5"
 room = "2.8.4"
 calendar = "2.10.0"
-wheelpickercompose = "1.1.11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoplayer" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "exoplayer" }
+datetime-wheel-picker = { module = "io.github.darkokoa:datetime-wheel-picker", version.ref = "datetimeWheelPicker" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -49,6 +51,7 @@ core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
 orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbit" }
 orbit-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbit" }
@@ -63,7 +66,6 @@ room = { module = "androidx.room:room-runtime", version.ref = "room"}
 room-codegen = { module = "androidx.room:room-compiler", version.ref = "room"}
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
-wheelpickercompose = { module = "com.github.commandiron:WheelPickerCompose", version.ref = "wheelpickercompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

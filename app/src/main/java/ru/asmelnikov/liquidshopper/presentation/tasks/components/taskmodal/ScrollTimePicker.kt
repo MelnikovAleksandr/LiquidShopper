@@ -8,8 +8,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.commandiron.wheel_picker_compose.WheelTimePicker
-import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
+import dev.darkokoa.datetimewheelpicker.WheelTimePicker
+import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
+import kotlinx.datetime.toJavaLocalTime
+import kotlinx.datetime.toKotlinLocalTime
 import java.time.LocalTime
 
 @Composable
@@ -24,7 +26,7 @@ fun ScrollTimePicker(
     ) {
         WheelTimePicker(
             modifier = Modifier,
-            startTime = LocalTime.now(),
+            startTime = LocalTime.now().toKotlinLocalTime(),
             size = DpSize(
                 width = maxWidth,
                 height = 168.dp
@@ -37,7 +39,7 @@ fun ScrollTimePicker(
                 color = color
             )
         ) { snappedDate ->
-            onDateChange(snappedDate)
+            onDateChange(snappedDate.toJavaLocalTime())
         }
     }
 }

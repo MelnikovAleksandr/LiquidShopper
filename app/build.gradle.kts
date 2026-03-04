@@ -97,7 +97,8 @@ dependencies {
     implementation(libs.calendar)
 
     // picker
-    implementation(libs.wheelpickercompose)
+    implementation(libs.datetime.wheel.picker)
+    implementation(libs.kotlinx.datetime)
 
     // test
     testImplementation(libs.junit)

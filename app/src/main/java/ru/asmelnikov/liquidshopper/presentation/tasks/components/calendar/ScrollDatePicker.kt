@@ -8,8 +8,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.commandiron.wheel_picker_compose.WheelDatePicker
-import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
+import dev.darkokoa.datetimewheelpicker.WheelDatePicker
+import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
+import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 
 @Composable
@@ -28,6 +29,7 @@ fun ScrollDatePicker(
                 width = maxWidth,
                 height = 168.dp
             ),
+            yearsRange = IntRange(1999, 2050),
             textStyle = MaterialTheme.typography.titleLarge,
             textColor = MaterialTheme.colorScheme.onBackground,
             selectorProperties = WheelPickerDefaults.selectorProperties(
@@ -36,7 +38,7 @@ fun ScrollDatePicker(
                 color = color
             )
         ) { snappedDate ->
-            onDateChange(snappedDate)
+            onDateChange(snappedDate.toJavaLocalDate())
         }
     }
 }

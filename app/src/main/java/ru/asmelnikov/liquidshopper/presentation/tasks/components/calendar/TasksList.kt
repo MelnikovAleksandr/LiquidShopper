@@ -53,6 +53,8 @@ fun TasksList(
     state: TasksState,
     selectedDayTasks: GroupedTasksByDay?,
     onDeleteTask: (Task) -> Unit,
+    onEditDialogShow: (Task) -> Unit,
+    onShareTask: (Task) -> Unit,
     isPortrait: Boolean
 ) {
 
@@ -133,11 +135,9 @@ fun TasksList(
                         .hazeSource(state = hazeState),
                     liquidState = liquidState,
                     task = task,
-                    onShareTask = {},
-                    onEditTask = {},
-                    onDeleteTask = {
-                        onDeleteTask(task)
-                    }
+                    onShareTask = onShareTask,
+                    onEditTask = onEditDialogShow,
+                    onDeleteTask = onDeleteTask
                 )
             }
         }

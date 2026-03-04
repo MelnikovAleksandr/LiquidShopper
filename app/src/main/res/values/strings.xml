@@ -5,11 +5,15 @@
     <string name="edit_task_drop_down">Изменить</string>
     <string name="delete_task_drop_down">Удалить</string>
     <string name="task_placeholder">Введите название списка</string>
+    <string name="task_edit_placeholder">Измените название списка</string>
     <string name="task_title_error">Не более %1$s символов</string>
     <string name="task_create">Создать</string>
+    <string name="task_update">Изменить</string>
     <string name="empty_tasks">Тут пока ничего нет, создайте список кнопкой</string>
     <string name="date_dismiss">Отмена</string>
     <string name="date_confirm">Выбрать</string>
+    <string name="shared_list">Поделиться списком покупок</string>
+    <string name="shared_list_title">Список покупок :</string>
     <string name="empty" />
 
     <!--    Categories-->

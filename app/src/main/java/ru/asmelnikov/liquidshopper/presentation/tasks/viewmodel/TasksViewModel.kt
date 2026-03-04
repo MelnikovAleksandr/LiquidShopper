@@ -1,12 +1,15 @@
 package ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import ru.asmelnikov.liquidshopper.domain.repository.TasksRepository
+import ru.asmelnikov.liquidshopper.utils.intent.sharedTask
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.UUID
 
@@ -27,13 +30,13 @@ class TasksViewModel(
     }
 
     fun onCreateClick() = intent {
-        reduce { state.copy(isModalShow = true) }
+        reduce { state.copy(isNewCreateModalShow = true) }
     }
 
     fun onModalDismiss() = intent {
         reduce {
             state.copy(
-                isModalShow = false,
+                isNewCreateModalShow = false,
                 title = "",
                 taskType = TaskTypes.OTHER,
                 emptyTitleError = false,
@@ -56,15 +59,10 @@ class TasksViewModel(
             return@intent
         }
         tasksRepository.insertTask(
-            Task(
-                uid = UUID.randomUUID().hashCode(),
-                taskName = state.title,
-                taskType = state.taskType,
-                isCompleted = false,
-                allItemsCount = 0,
-                inProgressItemsCount = 0,
-                timeStamp = state.selectedDay.atTime(state.selectedTime),
-                items = emptyList()
+            task = createNewTask(
+                title = state.title,
+                type = state.taskType,
+                timeStamp = state.selectedDay.atTime(state.selectedTime)
             )
         )
         onModalDismiss()
@@ -86,10 +84,106 @@ class TasksViewModel(
         reduce { state.copy(isShowSelectMonthDialog = false) }
     }
 
+    fun onEditClick(task: Task) = intent {
+        reduce {
+            state.copy(
+                isEditModalShow = true,
+                editTaskId = task.uid,
+                editTitle = task.taskName,
+                editType = task.taskType,
+                editDateTime = task.timeStamp,
+                emptyEditTitleError = false
+            )
+        }
+    }
+
+    fun onEditDismiss() = intent {
+        reduce {
+            state.copy(
+                isEditModalShow = false,
+                editTaskId = null,
+                editTitle = "",
+                editType = TaskTypes.OTHER,
+                editDateTime = LocalDateTime.now(),
+                emptyEditTitleError = false
+            )
+        }
+    }
+
+    fun onEditTitle(title: String) = intent {
+        reduce {
+            state.copy(
+                editTitle = title
+            )
+        }
+    }
+
+    fun onEditType(type: TaskTypes) = intent {
+        reduce {
+            state.copy(
+                editType = type
+            )
+        }
+    }
+
+    fun onEditTimeStamp(dateTime: LocalDateTime) = intent {
+        reduce {
+            state.copy(
+                editDateTime = dateTime
+            )
+        }
+    }
+
+    fun onConfirmEditClick() = intent {
+        if (state.editTitle.isBlank()) {
+            reduce { state.copy(emptyEditTitleError = true) }
+            return@intent
+        }
+        tasksRepository.updateTask(
+            task = createUpdateTask(
+                uid = state.editTaskId,
+                title = state.editTitle,
+                type = state.editType,
+                timeStamp = state.editDateTime
+            )
+        )
+        onEditDismiss()
+    }
+
+    fun onTaskShare(task: Task, context: Context) = intent {
+        sharedTask(task = task, context = context)
+    }
+
     private fun subscribeTasks() = intent {
         tasksRepository.tasksFlow().collect { tasks ->
             reduce { state.copy(tasks = tasks) }
         }
+    }
+
+    private fun createNewTask(title: String, type: TaskTypes, timeStamp: LocalDateTime): Task {
+        return Task(
+            uid = UUID.randomUUID().hashCode(),
+            taskName = title,
+            taskType = type,
+            isCompleted = false,
+            allItemsCount = 0,
+            inProgressItemsCount = 0,
+            timeStamp = timeStamp,
+            items = emptyList()
+        )
+    }
+
+    private fun createUpdateTask(uid: Int?, title: String, type: TaskTypes, timeStamp: LocalDateTime): Task {
+        return Task(
+            uid = uid ?: UUID.randomUUID().hashCode(),
+            taskName = title,
+            taskType = type,
+            isCompleted = false,
+            allItemsCount = 0,
+            inProgressItemsCount = 0,
+            timeStamp = timeStamp,
+            items = emptyList()
+        )
     }
 
 }

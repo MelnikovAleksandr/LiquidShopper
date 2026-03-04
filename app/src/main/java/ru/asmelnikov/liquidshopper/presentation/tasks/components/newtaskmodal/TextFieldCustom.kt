@@ -1,4 +1,4 @@
-package ru.asmelnikov.liquidshopper.presentation.tasks.components.taskmodal
+package ru.asmelnikov.liquidshopper.presentation.tasks.components.newtaskmodal
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -33,6 +33,7 @@ fun TextFieldCustom(
     onTitleChange: (String) -> Unit,
     maxInputLength: Int = 200,
     emptyPlaceholder: String,
+    errorString: String,
     isEmptyError: Boolean,
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
     focusManager: FocusManager,
@@ -72,7 +73,7 @@ fun TextFieldCustom(
             }
             AnimatedVisibility(visible = isEmptyError) {
                 Text(
-                    text = emptyPlaceholder,
+                    text = errorString,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onError,
                     maxLines = 1,
@@ -112,6 +113,7 @@ private fun TextFieldPreview() {
                 maxInputLength = 6793,
                 isEmptyError = true,
                 emptyPlaceholder = "Введите название списка",
+                errorString = "Введите название списка",
                 focusManager = focusManager,
                 keyboardController = null
             )

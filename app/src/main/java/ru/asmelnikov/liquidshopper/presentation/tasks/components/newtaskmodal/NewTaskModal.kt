@@ -1,4 +1,4 @@
-package ru.asmelnikov.liquidshopper.presentation.tasks.components.taskmodal
+package ru.asmelnikov.liquidshopper.presentation.tasks.components.newtaskmodal
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,11 +44,11 @@ import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskModal(
+fun NewTaskModal(
     modifier: Modifier = Modifier,
     state: TasksState,
     liquidState: LiquidState,
-    liquidParams: LiquidParams,
+    liquidParams: LiquidParams = LiquidParams(),
     onDismissRequest: () -> Unit,
     onTitleChange: (String) -> Unit,
     onTypeChange: (TaskTypes) -> Unit,
@@ -56,7 +56,7 @@ fun TaskModal(
     onTimeStampChange: (LocalTime) -> Unit
 ) {
 
-    if (state.isModalShow) {
+    if (state.isNewCreateModalShow) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         val scope = rememberCoroutineScope()
 
@@ -122,6 +122,7 @@ fun TaskModal(
                     onTitleChange = onTitleChange,
                     isEmptyError = state.emptyTitleError,
                     emptyPlaceholder = stringResource(R.string.task_placeholder),
+                    errorString = stringResource(R.string.task_placeholder),
                     focusManager = focusManager,
                     keyboardController = keyboardController
                 )

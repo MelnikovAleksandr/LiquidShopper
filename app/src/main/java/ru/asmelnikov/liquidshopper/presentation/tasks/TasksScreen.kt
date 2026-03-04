@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,7 +66,8 @@ import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.Day
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.MonthsCalendarTitle
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.TasksList
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.rememberFirstCompletelyVisibleMonth
-import ru.asmelnikov.liquidshopper.presentation.tasks.components.taskmodal.TaskModal
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.edittaskmodal.EditTaskModal
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.newtaskmodal.NewTaskModal
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksState
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksViewModel
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
@@ -74,6 +76,7 @@ import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
 import ru.asmelnikov.liquidshopper.utils.components.isPortrait
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.YearMonth
 
@@ -88,6 +91,7 @@ fun TasksScreen(
     ) -> Unit,
     viewModel: TasksViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     val state by viewModel.container.stateFlow.collectAsState()
 
     TasksScreenContent(
@@ -102,6 +106,15 @@ fun TasksScreen(
         onTimeStampChange = viewModel::onTimeStampChange,
         onDismissMonthDialog = viewModel::onDismissMonthDialog,
         onMonthDialogShow = viewModel::onMonthDialogShow,
+        onEditDialogShow = viewModel::onEditClick,
+        onDismissEditRequest = viewModel::onEditDismiss,
+        onEditTitleChange = viewModel::onEditTitle,
+        onEditTypeChange = viewModel::onEditType,
+        onEditTimeStampChange = viewModel::onEditTimeStamp,
+        onTaskUpdateConfirm = viewModel::onConfirmEditClick,
+        onTaskShare = { task ->
+            viewModel.onTaskShare(task = task, context = context)
+        },
         isPortrait = isPortrait()
     )
 
@@ -120,6 +133,13 @@ fun TasksScreenContent(
     onTimeStampChange: (LocalTime) -> Unit,
     onDismissMonthDialog: () -> Unit,
     onMonthDialogShow: () -> Unit,
+    onEditDialogShow: (Task) -> Unit,
+    onDismissEditRequest: () -> Unit,
+    onEditTitleChange: (String) -> Unit,
+    onEditTypeChange: (TaskTypes) -> Unit,
+    onEditTimeStampChange: (LocalDateTime) -> Unit,
+    onTaskUpdateConfirm: () -> Unit,
+    onTaskShare: (Task) -> Unit,
     isPortrait: Boolean
 ) {
     val scrollState = rememberLazyListState()
@@ -161,15 +181,24 @@ fun TasksScreenContent(
         }
     )
 
-    TaskModal(
+    NewTaskModal(
         state = state,
         liquidState = liquidState,
-        liquidParams = LiquidParams(),
         onTypeChange = onTypeChange,
         onDismissRequest = onDismissModal,
         onTitleChange = onTitleChange,
         onTaskCreateConfirm = onTaskCreateConfirm,
         onTimeStampChange = onTimeStampChange
+    )
+
+    EditTaskModal(
+        state = state,
+        liquidState = liquidState,
+        onDismissRequest = onDismissEditRequest,
+        onTitleChange = onEditTitleChange,
+        onTypeChange = onEditTypeChange,
+        onTimeStampChange = onEditTimeStampChange,
+        onTaskUpdateConfirm = onTaskUpdateConfirm
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -277,6 +306,8 @@ fun TasksScreenContent(
                     state = state,
                     selectedDayTasks = selectedDayTasks,
                     onDeleteTask = onDeleteTask,
+                    onShareTask = onTaskShare,
+                    onEditDialogShow = onEditDialogShow,
                     isPortrait = true
                 )
 
@@ -377,6 +408,8 @@ fun TasksScreenContent(
                     state = state,
                     selectedDayTasks = selectedDayTasks,
                     onDeleteTask = onDeleteTask,
+                    onShareTask = onTaskShare,
+                    onEditDialogShow = onEditDialogShow,
                     isPortrait = false
                 )
             }
@@ -388,7 +421,7 @@ fun TasksScreenContent(
                 .padding(24.dp),
             enter = scaleIn(),
             exit = scaleOut(),
-            visible = !scrollState.isScrollInProgress && !state.isModalShow
+            visible = !scrollState.isScrollInProgress && !state.isNewCreateModalShow
         ) {
             ScaleButtonBox(
                 modifier = Modifier.size(if (isPortrait()) dimens.large else dimens.regular),
@@ -422,6 +455,13 @@ private fun CalendarPreview1() {
             onTimeStampChange = {},
             onDismissMonthDialog = {},
             onMonthDialogShow = {},
+            onEditDialogShow = {},
+            onDismissEditRequest = {},
+            onEditTitleChange = {},
+            onEditTypeChange = {},
+            onEditTimeStampChange = {},
+            onTaskUpdateConfirm = {},
+            onTaskShare = {},
             isPortrait = true
         )
     }
@@ -446,6 +486,13 @@ private fun CalendarPreview2() {
             onTimeStampChange = {},
             onDismissMonthDialog = {},
             onMonthDialogShow = {},
+            onEditDialogShow = {},
+            onDismissEditRequest = {},
+            onEditTitleChange = {},
+            onEditTypeChange = {},
+            onEditTimeStampChange = {},
+            onTaskUpdateConfirm = {},
+            onTaskShare = {},
             isPortrait = false
         )
     }

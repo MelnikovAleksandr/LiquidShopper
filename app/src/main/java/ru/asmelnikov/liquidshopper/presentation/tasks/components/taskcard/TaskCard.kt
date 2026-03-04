@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -45,6 +46,8 @@ import ru.asmelnikov.liquidshopper.domain.models.taskItemsMock
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
+import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonColumn
 import ru.asmelnikov.liquidshopper.utils.components.scaleindication.ScaleIndication
 import ru.asmelnikov.liquidshopper.utils.datetime.toFormattedString
 
@@ -123,10 +126,12 @@ fun TaskCard(
                 painter = painterResource(task.taskType.drawableRes),
                 contentDescription = "type"
             )
-
+            Spacer(modifier = Modifier.width(dimens.extraSmall1))
             CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
-                IconButton(
-                    modifier = Modifier,
+
+                ScaleButtonBox(
+                    modifier = Modifier.size(dimens.medium4),
+                    liquidState = liquidState,
                     onClick = {
                         onShareTask(task)
                     }
@@ -138,12 +143,14 @@ fun TaskCard(
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
-
-                IconButton(
-                    modifier = Modifier,
+                Spacer(modifier = Modifier.width(dimens.extraSmall1))
+                ScaleButtonColumn(
+                    modifier = Modifier.size(dimens.medium4),
+                    liquidState = liquidState,
                     onClick = {
                         expanded = true
-                    }) {
+                    }
+                ) {
                     DropDown(
                         modifier = modifier,
                         liquidState = liquidState,
@@ -167,6 +174,7 @@ fun TaskCard(
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
+                Spacer(modifier = Modifier.width(dimens.extraSmall1))
             }
         }
     }

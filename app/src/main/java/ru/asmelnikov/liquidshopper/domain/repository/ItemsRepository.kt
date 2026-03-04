@@ -14,4 +14,6 @@ interface ItemsRepository {
 
     suspend fun updateItem(item: Item)
 
+    suspend fun allItemsStatusInverse(taskId: Int, status: Boolean)
+
 }

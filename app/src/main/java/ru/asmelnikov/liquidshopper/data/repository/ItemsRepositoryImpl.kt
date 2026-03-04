@@ -1,6 +1,8 @@
 package ru.asmelnikov.liquidshopper.data.repository
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import ru.asmelnikov.liquidshopper.data.local.ItemsDao
 import ru.asmelnikov.liquidshopper.data.models.toTaskItemEntity
@@ -13,7 +15,7 @@ class ItemsRepositoryImpl(
     private val itemsDao: ItemsDao
 ): ItemsRepository {
     override fun taskFlow(taskId: Int): Flow<Task> {
-        return itemsDao.getTaskWithItemsByTaskId(taskId = taskId).map { it.toTasks() }
+        return itemsDao.getTaskWithItemsByTaskId(taskId = taskId).flowOn(Dispatchers.IO).map { it.toTasks() }
     }
 
     override suspend fun insertItem(item: Item) {
@@ -26,5 +28,9 @@ class ItemsRepositoryImpl(
 
     override suspend fun updateItem(item: Item) {
         itemsDao.updateTaskItem(taskItem = item.toTaskItemEntity())
+    }
+
+    override suspend fun allItemsStatusInverse(taskId: Int, status: Boolean) {
+        itemsDao.invertAllItemsBoughtStatus(taskId = taskId, status = status)
     }
 }

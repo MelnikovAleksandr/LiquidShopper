@@ -116,7 +116,8 @@ class TasksViewModel(
     fun onEditTitle(title: String) = intent {
         reduce {
             state.copy(
-                editTitle = title
+                editTitle = title,
+                emptyEditTitleError = false
             )
         }
     }
@@ -176,6 +177,7 @@ class TasksViewModel(
             allItemsCount = 0,
             inProgressItemsCount = 0,
             timeStamp = timeStamp,
+            sumPrice = 0,
             items = emptyList()
         )
     }
@@ -189,6 +191,7 @@ class TasksViewModel(
             allItemsCount = 0,
             inProgressItemsCount = 0,
             timeStamp = timeStamp,
+            sumPrice = 0,
             items = emptyList()
         )
     }

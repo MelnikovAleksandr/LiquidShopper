@@ -37,6 +37,7 @@ fun TaskWithItems.toTasks(): Task {
         isCompleted = isCompleted,
         allItemsCount = allItemsCount,
         inProgressItemsCount = inProgressItemsCount,
+        sumPrice = itemsDomain.sumOf { it.price },
         items = itemsDomain
     )
 }

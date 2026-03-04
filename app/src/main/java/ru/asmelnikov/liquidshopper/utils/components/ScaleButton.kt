@@ -2,6 +2,7 @@ package ru.asmelnikov.liquidshopper.utils.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -27,14 +30,27 @@ fun ScaleButtonBox(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource? = null,
     onClick: () -> Unit,
+    isPressed: (Boolean) -> Unit = {},
     content: @Composable BoxScope.() -> Unit
 ) {
+
+    val pressInteractionSource = interactionSource ?: remember { MutableInteractionSource() }
+
+    LaunchedEffect(pressInteractionSource) {
+        pressInteractionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is PressInteraction.Press -> isPressed(true)
+                is PressInteraction.Release, is PressInteraction.Cancel -> isPressed(false)
+            }
+        }
+    }
+
     Box(
         modifier = modifier
             .clickable(
                 onClick = onClick,
                 indication = ScaleIndication,
-                interactionSource = interactionSource,
+                interactionSource = pressInteractionSource,
                 enabled = enabled
             )
             .liquid(liquidState, liquidParams()),
@@ -78,7 +94,7 @@ fun ScaleButtonColumn(
     onClick: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Column (
+    Column(
         modifier = modifier
             .clickable(
                 onClick = onClick,
@@ -110,10 +126,3 @@ data class LiquidParams(
         shape = this@LiquidParams.shape
     }
 }
-
-//refraction = 0.5f
-//curve = 0.4f
-//saturation = 1.0f
-//dispersion = 1.0f
-//edge = 0.15f
-//shape = CircleShape

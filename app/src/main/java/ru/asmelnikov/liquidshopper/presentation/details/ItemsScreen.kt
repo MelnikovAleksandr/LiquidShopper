@@ -9,7 +9,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -42,7 +39,12 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectSideEffect
 import ru.asmelnikov.liquidshopper.R
+import ru.asmelnikov.liquidshopper.domain.models.Item
+import ru.asmelnikov.liquidshopper.domain.models.UnitType
+import ru.asmelnikov.liquidshopper.presentation.details.components.CreateItemModal
+import ru.asmelnikov.liquidshopper.presentation.details.components.EditItemModal
 import ru.asmelnikov.liquidshopper.presentation.details.components.Header
+import ru.asmelnikov.liquidshopper.presentation.details.components.ItemView
 import ru.asmelnikov.liquidshopper.presentation.details.viewmodel.ItemsSideEffects
 import ru.asmelnikov.liquidshopper.presentation.details.viewmodel.ItemsState
 import ru.asmelnikov.liquidshopper.presentation.details.viewmodel.ItemsViewModel
@@ -80,7 +82,20 @@ fun SharedTransitionScope.ItemsScreen(
     ItemsScreenContent(
         state = state,
         onBackClick = viewModel::navigateBack,
-        animatedVisibilityScope = animatedVisibilityScope
+        onNewCreateModalShow = viewModel::onNewItemCreateClick,
+        animatedVisibilityScope = animatedVisibilityScope,
+        onDismissNewCreateRequest = viewModel::onNewItemDismiss,
+        onNewItemNameChange = viewModel::onNewItemNameChange,
+        onNewItemUnitChange = viewModel::onNewItemUnitChange,
+        onNewItemCountChange = viewModel::onNewItemCountChange,
+        onNewItemPriceChange = viewModel::onNewItemPriceChange,
+        onItemBoughtChange = viewModel::onItemBoughtChange,
+        onDeleteItem = viewModel::onItemDelete,
+        onEditItem = viewModel::onEditModalShow,
+        onDismissEditModal = viewModel::onEditModalDismiss,
+        onEditConfirm = viewModel::onEditConfirm,
+        onItemsChangeStatusCall = viewModel::onItemsChangeStatusCall,
+        onNewCreateConfirm = viewModel::onNewCreateConfirm
     )
 }
 
@@ -88,11 +103,42 @@ fun SharedTransitionScope.ItemsScreen(
 fun SharedTransitionScope.ItemsScreenContent(
     state: ItemsState,
     onBackClick: () -> Unit,
+    onNewCreateModalShow: () -> Unit,
+    onDismissNewCreateRequest: () -> Unit,
+    onNewItemNameChange: (String) -> Unit,
+    onNewItemCountChange: (Int) -> Unit,
+    onNewItemUnitChange: (UnitType) -> Unit,
+    onNewItemPriceChange: (Int) -> Unit,
+    onNewCreateConfirm: () -> Unit,
+    onItemBoughtChange: (Item) -> Unit,
+    onEditItem: (Item) -> Unit,
+    onDeleteItem: (Item) -> Unit,
+    onDismissEditModal: () -> Unit,
+    onEditConfirm: (Item) -> Unit,
+    onItemsChangeStatusCall: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val scrollState = rememberLazyListState()
     val liquidState = rememberLiquidState()
     val hazeState = rememberHazeState()
+
+    CreateItemModal(
+        state = state,
+        liquidState = liquidState,
+        onDismissRequest = onDismissNewCreateRequest,
+        onNewItemNameChange = onNewItemNameChange,
+        onNewItemCountChange = onNewItemCountChange,
+        onNewItemUnitChange = onNewItemUnitChange,
+        onNewItemPriceChange = onNewItemPriceChange,
+        onNewCreateConfirm = onNewCreateConfirm
+    )
+
+    EditItemModal(
+        state = state,
+        liquidState = liquidState,
+        onDismissRequest = onDismissEditModal,
+        onEditConfirm = onEditConfirm
+    )
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -120,24 +166,22 @@ fun SharedTransitionScope.ItemsScreenContent(
                     animatedVisibilityScope = animatedVisibilityScope,
                     hazeState = hazeState,
                     liquidState = liquidState,
-                    onBackClick = onBackClick
+                    onBackClick = onBackClick,
+                    onItemsChangeStatusCall = onItemsChangeStatusCall
                 )
             }
 
             items(items = state.task?.items ?: emptyList(), key = { it.uid }) { item ->
-
-                Row {
-                    Text(
-                        text = item.itemName
-                    )
-                    Text(
-                        text = item.count.toString()
-                    )
-                    Text(
-                        text = stringResource(item.units.stringRes)
-                    )
-                }
-
+                ItemView(
+                    modifier = Modifier
+                        .animateItem()
+                        .hazeSource(state = hazeState),
+                    item = item,
+                    liquidState = liquidState,
+                    onItemBoughtChange = onItemBoughtChange,
+                    onEditItem = onEditItem,
+                    onDeleteItem = onDeleteItem
+                )
             }
 
             item {
@@ -150,20 +194,18 @@ fun SharedTransitionScope.ItemsScreenContent(
         }
 
 
-
-
         AnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp),
             enter = scaleIn(),
             exit = scaleOut(),
-            visible = !scrollState.isScrollInProgress
+            visible = !scrollState.isScrollInProgress && !state.isNewItemModalShow && !state.isEditModalShow
         ) {
             ScaleButtonBox(
                 modifier = Modifier.size(if (isPortrait()) dimens.large else dimens.regular),
                 liquidState = liquidState,
-                onClick = {}
+                onClick = onNewCreateModalShow
             ) {
                 Icon(
                     modifier = Modifier.size(dimens.medium4),

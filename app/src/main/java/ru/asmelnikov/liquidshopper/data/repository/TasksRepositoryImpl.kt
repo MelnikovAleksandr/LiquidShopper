@@ -1,6 +1,8 @@
 package ru.asmelnikov.liquidshopper.data.repository
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import ru.asmelnikov.liquidshopper.data.local.TasksDao
 import ru.asmelnikov.liquidshopper.data.models.toGroupedTasksByDay
@@ -14,7 +16,7 @@ class TasksRepositoryImpl(
 ): TasksRepository {
 
     override fun tasksFlow(): Flow<List<GroupedTasksByDay>> {
-        return tasksDao.getAllTasksWithItemsFlow().map { it.toGroupedTasksByDay() }
+        return tasksDao.getAllTasksWithItemsFlow().flowOn(Dispatchers.IO).map { it.toGroupedTasksByDay() }
     }
 
     override suspend fun insertTask(task: Task) {

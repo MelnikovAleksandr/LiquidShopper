@@ -40,6 +40,7 @@ import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonRow
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
+import ru.asmelnikov.liquidshopper.utils.components.EnumDropDown
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -148,6 +149,7 @@ fun NewTaskModal(
                             onTypeChange(it as TaskTypes)
                         },
                         selectedItem = state.taskType,
+                        withIcons = true,
                         focusManager = focusManager,
                         keyboardController = keyboardController
                     )

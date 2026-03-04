@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import ru.asmelnikov.liquidshopper.R
@@ -37,14 +38,20 @@ fun TextFieldCustom(
     isEmptyError: Boolean,
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
     focusManager: FocusManager,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
+    isNumericOnly: Boolean = false
 ) {
     TextField(
         modifier = modifier.clip(MaterialTheme.shapes.medium),
         value = title,
         onValueChange = { newValue ->
-            if (newValue.length <= maxInputLength) {
-                onTitleChange(newValue)
+            val filteredValue = if (isNumericOnly) {
+                newValue.filter { it.isDigit() }
+            } else {
+                newValue
+            }
+            if (filteredValue.length <= maxInputLength) {
+                onTitleChange(filteredValue)
             }
         },
         textStyle = TextStyle(
@@ -62,7 +69,7 @@ fun TextFieldCustom(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            AnimatedVisibility(visible = title.isEmpty() && !isEmptyError) {
+            AnimatedVisibility(visible = !isEmptyError && title.length < maxInputLength) {
                 Text(
                     text = emptyPlaceholder,
                     style = MaterialTheme.typography.labelLarge,
@@ -75,13 +82,19 @@ fun TextFieldCustom(
                 Text(
                     text = errorString,
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onError,
+                    color = MaterialTheme.colorScheme.error,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
         },
-        keyboardOptions = keyboardOptions,
+        keyboardOptions = if (isNumericOnly) {
+            keyboardOptions.copy(
+                keyboardType = KeyboardType.Number
+            )
+        } else {
+            keyboardOptions
+        },
         keyboardActions = KeyboardActions(
             onDone = {
                 keyboardController?.hide()

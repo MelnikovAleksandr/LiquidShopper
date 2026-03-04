@@ -16,6 +16,15 @@
     <string name="shared_list_title">Список покупок :</string>
     <string name="empty" />
 
+    <!--    ItemsScreen-->
+    <string name="item_placeholder">Введите название покупки</string>
+    <string name="item_price">Стоимость ₽</string>
+    <string name="item_edit_placeholder">Измените название покупки</string>
+    <string name="item_create">Добавить</string>
+    <string name="item_update">Изменить</string>
+    <string name="item_currency">₽</string>
+    <string name="items_call">Все</string>
+
     <!--    Categories-->
     <string name="category_pharmacy">Аптека</string>
     <string name="category_alcohol">Алкоголь</string>

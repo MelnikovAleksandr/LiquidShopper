@@ -34,7 +34,7 @@ import io.github.fletchmckee.liquid.LiquidState
 import kotlinx.coroutines.launch
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
-import ru.asmelnikov.liquidshopper.presentation.tasks.components.newtaskmodal.EnumDropDown
+import ru.asmelnikov.liquidshopper.utils.components.EnumDropDown
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.newtaskmodal.TextFieldCustom
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksState
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
@@ -136,6 +136,7 @@ fun EditTaskModal(
                         onTypeChange(it as TaskTypes)
                     },
                     selectedItem = state.editType,
+                    withIcons = true,
                     focusManager = focusManager,
                     keyboardController = keyboardController
                 )

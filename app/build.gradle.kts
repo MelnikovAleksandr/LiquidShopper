@@ -90,10 +90,6 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.codegen)
 
-    // player
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.ui)
-
     // calendar
     implementation(libs.calendar)
 

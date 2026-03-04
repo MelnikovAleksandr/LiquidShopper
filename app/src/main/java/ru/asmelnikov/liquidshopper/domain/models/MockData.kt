@@ -7,9 +7,9 @@ val taskItemsMock = listOf(
     Item(
         uid = UUID.randomUUID().hashCode(),
         taskId = UUID.randomUUID().hashCode(),
-        itemName = "",
-        count = 1,
-        price = 1,
+        itemName = "Молоко",
+        count = 13,
+        price = 23,
         units = UnitType.PIECES,
         bought = false
     ),
@@ -59,6 +59,7 @@ val taskMock = Task(
     isCompleted = false,
     allItemsCount = 0,
     inProgressItemsCount = 0,
+    sumPrice = 10000,
     items = listOf()
 )
 
@@ -68,8 +69,9 @@ val taskWithItemsMock = Task(
     taskType = TaskTypes.ALCOHOL,
     timeStamp = LocalDateTime.now(),
     isCompleted = true,
-    allItemsCount = 2,
-    inProgressItemsCount = 2,
+    allItemsCount = 4,
+    inProgressItemsCount = 4,
+    sumPrice = 10,
     items = taskItemsMock
 )
 

@@ -26,4 +26,7 @@ interface ItemsDao {
     @Delete
     suspend fun deleteTaskItem(taskItem: TaskItemEntity)
 
+    @Query("UPDATE taskitementity SET bought = NOT :status WHERE taskId = :taskId")
+    suspend fun invertAllItemsBoughtStatus(taskId: Int, status: Boolean)
+
 }

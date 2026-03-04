@@ -176,7 +176,7 @@ fun SharedTransitionScope.TaskCard(
                     }
                 ) {
                     DropDown(
-                        modifier = modifier,
+                        modifier = Modifier,
                         liquidState = liquidState,
                         liquidParams = LiquidParams().copy(dispersion = 1f),
                         expanded = expanded,

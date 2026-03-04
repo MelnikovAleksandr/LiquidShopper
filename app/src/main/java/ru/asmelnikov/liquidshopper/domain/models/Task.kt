@@ -24,6 +24,7 @@ data class Task(
     val isCompleted: Boolean,
     val allItemsCount: Int,
     val inProgressItemsCount: Int,
+    val sumPrice: Int,
     val items: List<Item>
 ): Parcelable
 

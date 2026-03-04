@@ -12,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import ru.asmelnikov.liquidshopper.presentation.mainstate.rememberAppState
 import ru.asmelnikov.liquidshopper.presentation.navigation.NavGraph
@@ -20,6 +22,8 @@ import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.decorView.rootView.setBackgroundColor(Color.Transparent.toArgb())
+        actionBar?.hide()
         enableEdgeToEdge()
         installSplashScreen()
         setContent {

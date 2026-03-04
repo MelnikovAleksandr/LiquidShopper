@@ -96,7 +96,7 @@ fun CountSlider(
     val counter by animateIntAsState(
         targetValue = count,
         animationSpec = tween(
-            durationMillis = 500,
+            durationMillis = 100,
             easing = FastOutSlowInEasing
         ), label = ""
     )
@@ -179,12 +179,12 @@ fun CountSlider(
             modifier = Modifier.fillMaxWidth(),
             value = counter.toFloat(),
             valueRange = MIN_COUNT.toFloat()..MAX_COUNT.toFloat(),
-            steps = 9,
             onValueChange = { newIntValue ->
                 if (newIntValue.toInt() in MIN_COUNT..MAX_COUNT) {
                     onCountChange(newIntValue.toInt())
                 }
             },
+            steps = 0,
             track = { sliderState ->
                 SliderDefaults.Track(
                     modifier = Modifier.liquefiable(nestedLiquidState),

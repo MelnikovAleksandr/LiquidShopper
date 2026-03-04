@@ -196,11 +196,12 @@ fun SharedTransitionScope.ItemsScreenContent(
 
         AnimatedVisibility(
             modifier = Modifier
+                .navigationBarsPadding()
                 .align(Alignment.BottomEnd)
                 .padding(24.dp),
             enter = scaleIn(),
             exit = scaleOut(),
-            visible = !scrollState.isScrollInProgress && !state.isNewItemModalShow && !state.isEditModalShow
+            visible = !scrollState.isScrollInProgress
         ) {
             ScaleButtonBox(
                 modifier = Modifier.size(if (isPortrait()) dimens.large else dimens.regular),

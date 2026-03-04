@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -461,11 +462,12 @@ fun SharedTransitionScope.TasksScreenContent(
 
         AnimatedVisibility(
             modifier = Modifier
+                .navigationBarsPadding()
                 .align(Alignment.BottomEnd)
                 .padding(24.dp),
             enter = scaleIn(),
             exit = scaleOut(),
-            visible = !scrollState.isScrollInProgress && !state.isNewCreateModalShow
+            visible = !scrollState.isScrollInProgress
         ) {
             ScaleButtonBox(
                 modifier = Modifier.size(if (isPortrait()) dimens.large else dimens.regular),

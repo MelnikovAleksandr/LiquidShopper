@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LiquidShopper</string>
+    <string name="app_name">Шоппер</string>
 
     <!--    TasksScreen-->
     <string name="edit_task_drop_down">Изменить</string>

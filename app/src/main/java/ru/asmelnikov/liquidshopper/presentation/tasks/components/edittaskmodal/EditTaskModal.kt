@@ -130,7 +130,7 @@ fun EditTaskModal(
                 EnumDropDown(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(end = dimens.small1),
+                        .padding(horizontal = dimens.small1),
                     items = TaskTypes.entries,
                     onItemChanged = {
                         onTypeChange(it as TaskTypes)
@@ -145,7 +145,7 @@ fun EditTaskModal(
                 ScrollDateTimePicker(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(end = dimens.small1),
+                        .padding(horizontal = dimens.small1),
                     startDateTime = state.editDateTime,
                     onDateChange = onTimeStampChange
                 )

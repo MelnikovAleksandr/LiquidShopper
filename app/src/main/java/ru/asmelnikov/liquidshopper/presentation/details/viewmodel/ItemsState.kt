@@ -11,3 +11,7 @@ data class ItemsState(
     val taskId: Int,
     val task: Task? = null
 ) : Parcelable
+
+sealed class ItemsSideEffects {
+    data object NavigateBack: ItemsSideEffects()
+}

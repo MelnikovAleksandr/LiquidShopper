@@ -24,7 +24,7 @@ fun List<TaskWithItems>.toGroupedTasksByDay(): List<GroupedTasksByDay> {
 }
 
 fun TaskWithItems.toTasks(): Task {
-    val itemsDomain = items.map { it.toTaskItem() }
+    val itemsDomain = items.map { it.toTaskItem() }.sortedBy { it.bought }
     val allItemsCount = itemsDomain.count()
     val inProgressItemsCount = itemsDomain.count { it.bought }
     val isCompleted = allItemsCount > 0 && allItemsCount == inProgressItemsCount

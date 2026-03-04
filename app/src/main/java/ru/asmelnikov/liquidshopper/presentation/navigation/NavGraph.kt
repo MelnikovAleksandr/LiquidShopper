@@ -1,5 +1,6 @@
 package ru.asmelnikov.liquidshopper.presentation.navigation
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -11,13 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import ru.asmelnikov.liquidshopper.presentation.details.ItemsScreen
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
 import ru.asmelnikov.liquidshopper.presentation.tasks.TasksScreen
 
 @Composable
-fun NavGraph(
+fun SharedTransitionScope.NavGraph(
     appState: MainAppState,
     paddingValues: PaddingValues,
     showSnackbar: (
@@ -34,7 +36,8 @@ fun NavGraph(
             entry<Routes.TasksScreen> {
                 TasksScreen(
                     appState = appState,
-                    showSnackbar = showSnackbar
+                    showSnackbar = showSnackbar,
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
                 )
             }
 
@@ -42,7 +45,8 @@ fun NavGraph(
                 ItemsScreen(
                     appState = appState,
                     showSnackbar = showSnackbar,
-                    taskId = it.taskId
+                    taskId = it.taskId,
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current
                 )
             }
         },

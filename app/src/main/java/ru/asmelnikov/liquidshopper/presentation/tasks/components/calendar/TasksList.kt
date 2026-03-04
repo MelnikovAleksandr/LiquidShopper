@@ -1,5 +1,7 @@
 package ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -11,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -45,18 +46,18 @@ import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.datetime.toDayMonthString
 
 @Composable
-fun TasksList(
+fun SharedTransitionScope.TasksList(
     modifier: Modifier = Modifier,
     liquidState: LiquidState,
     scrollState: LazyListState,
     hazeState: HazeState,
     state: TasksState,
     selectedDayTasks: GroupedTasksByDay?,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onDeleteTask: (Task) -> Unit,
     onEditDialogShow: (Task) -> Unit,
     onShareTask: (Task) -> Unit,
-    onDetails: (Int) -> Unit,
-    isPortrait: Boolean
+    onDetails: (Int) -> Unit
 ) {
 
     LazyColumn(
@@ -77,13 +78,6 @@ fun TasksList(
 
                 Text(
                     modifier = Modifier
-                        .then(
-                            if (isPortrait) {
-                                Modifier
-                            } else {
-                                Modifier.statusBarsPadding()
-                            }
-                        )
                         .padding(dimens.small3),
                     text = state.selectedDay.toDayMonthString(),
                     style = MaterialTheme.typography.titleMedium,
@@ -136,6 +130,7 @@ fun TasksList(
                         .hazeSource(state = hazeState),
                     liquidState = liquidState,
                     task = task,
+                    animatedVisibilityScope = animatedVisibilityScope,
                     onShareTask = onShareTask,
                     onEditTask = onEditDialogShow,
                     onDeleteTask = onDeleteTask,

@@ -1,5 +1,10 @@
 package ru.asmelnikov.liquidshopper.presentation.tasks.components.taskcard
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,8 +46,8 @@ import io.github.fletchmckee.liquid.LiquidState
 import io.github.fletchmckee.liquid.rememberLiquidState
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
-import ru.asmelnikov.liquidshopper.domain.models.taskMock
 import ru.asmelnikov.liquidshopper.domain.models.taskItemsMock
+import ru.asmelnikov.liquidshopper.domain.models.taskMock
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
@@ -51,7 +57,7 @@ import ru.asmelnikov.liquidshopper.utils.components.scaleindication.ScaleIndicat
 import ru.asmelnikov.liquidshopper.utils.datetime.toFormattedString
 
 @Composable
-fun TaskCard(
+fun SharedTransitionScope.TaskCard(
     modifier: Modifier = Modifier,
     liquidState: LiquidState,
     task: Task,
@@ -59,6 +65,7 @@ fun TaskCard(
     onEditTask: (Task) -> Unit,
     onDeleteTask: (Task) -> Unit,
     onDetails: (Int) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     interactionSource: MutableInteractionSource? = null
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -114,6 +121,13 @@ fun TaskCard(
 
             Text(
                 modifier = Modifier
+                    .sharedElement(
+                        rememberSharedContentState(key = task.taskName + task.uid),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+                            tween(durationMillis = 500)
+                        }
+                    )
                     .weight(1f)
                     .padding(horizontal = dimens.small1)
                     .padding(top = dimens.small1, bottom = dimens.small3),
@@ -124,7 +138,15 @@ fun TaskCard(
             )
 
             Image(
-                modifier = Modifier.size(dimens.medium4),
+                modifier = Modifier
+                    .sharedElement(
+                        rememberSharedContentState(key = task.taskType.drawableRes + task.uid),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+                            tween(durationMillis = 500)
+                        }
+                    )
+                    .size(dimens.medium4),
                 painter = painterResource(task.taskType.drawableRes),
                 contentDescription = "type"
             )
@@ -142,7 +164,7 @@ fun TaskCard(
                         modifier = Modifier.size(dimens.medium3),
                         imageVector = Icons.Filled.Share,
                         contentDescription = "share",
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Spacer(modifier = Modifier.width(dimens.extraSmall1))
@@ -173,7 +195,7 @@ fun TaskCard(
                         modifier = Modifier.size(dimens.medium3),
                         imageVector = Icons.Filled.Menu,
                         contentDescription = "menu",
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Spacer(modifier = Modifier.width(dimens.extraSmall1))
@@ -186,30 +208,40 @@ fun TaskCard(
 @Composable
 private fun TaskCardPreview() {
     LiquidShopperTheme(darkTheme = true) {
-        Column {
-            Spacer(modifier = Modifier.height(8.dp))
-            TaskCard(
-                task = taskMock.copy(items = taskItemsMock),
-                liquidState = rememberLiquidState(),
-                onShareTask = {},
-                onEditTask = {},
-                onDeleteTask = {},
-                onDetails = {}
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            TaskCard(
-                task = taskMock.copy(
-                    items = taskItemsMock,
-                    taskType = TaskTypes.ALCOHOL,
-                    taskName = "Test name of Task"
-                ),
-                liquidState = rememberLiquidState(),
-                onShareTask = {},
-                onEditTask = {},
-                onDeleteTask = {},
-                onDetails = {}
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+        SharedTransitionLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            AnimatedVisibility(visible = true) {
+                Column {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TaskCard(
+                        task = taskMock.copy(items = taskItemsMock),
+                        liquidState = rememberLiquidState(),
+                        animatedVisibilityScope = this@AnimatedVisibility,
+                        onShareTask = {},
+                        onEditTask = {},
+                        onDeleteTask = {},
+                        onDetails = {}
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TaskCard(
+                        task = taskMock.copy(
+                            items = taskItemsMock,
+                            taskType = TaskTypes.ALCOHOL,
+                            taskName = "Test name of Task"
+                        ),
+                        liquidState = rememberLiquidState(),
+                        animatedVisibilityScope = this@AnimatedVisibility,
+                        onShareTask = {},
+                        onEditTask = {},
+                        onDeleteTask = {},
+                        onDetails = {}
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
         }
     }
 }

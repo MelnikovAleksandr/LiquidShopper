@@ -10,15 +10,19 @@ class ItemsViewModel(
     private val itemsRepository: ItemsRepository,
     taskId: Int,
     savedStateHandle: SavedStateHandle
-): ViewModel(), ContainerHost<ItemsState, Nothing> {
+): ViewModel(), ContainerHost<ItemsState, ItemsSideEffects> {
 
-    override val container = container<ItemsState, Nothing>(
+    override val container = container<ItemsState, ItemsSideEffects>(
         initialState = ItemsState(taskId = taskId),
         savedStateHandle = savedStateHandle
     )
 
     init {
         subscribeTask()
+    }
+
+    fun navigateBack() = intent {
+        postSideEffect(ItemsSideEffects.NavigateBack)
     }
 
     private fun subscribeTask() = intent {

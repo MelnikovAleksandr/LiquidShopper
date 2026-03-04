@@ -31,7 +31,7 @@ fun TextFieldCustom(
     modifier: Modifier = Modifier,
     title: String,
     onTitleChange: (String) -> Unit,
-    maxInputLength: Int = 200,
+    maxInputLength: Int = 100,
     emptyPlaceholder: String,
     errorString: String,
     isEmptyError: Boolean,

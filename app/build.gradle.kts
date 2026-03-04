@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,6 +10,22 @@ plugins {
 }
 
 android {
+
+    signingConfigs {
+        create("release") {
+            val p = Properties()
+            p.load(project.rootProject.file("local.properties").reader())
+            val file: String = p.getProperty("storeFile")
+            val alias: String = p.getProperty("keyAlias")
+            val storePas: String = p.getProperty("storePassword")
+            val keyPas: String = p.getProperty("keyPassword")
+            storeFile = file("\"$file\"")
+            storePassword = "\"$storePas\""
+            keyAlias = "\"$alias\""
+            keyPassword = "\"$keyPas\""
+        }
+    }
+
     namespace = "ru.asmelnikov.liquidshopper"
     compileSdk = 36
 

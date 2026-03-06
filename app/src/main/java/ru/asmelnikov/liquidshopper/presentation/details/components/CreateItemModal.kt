@@ -82,8 +82,7 @@ fun CreateItemModal(
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
@@ -115,99 +114,106 @@ fun CreateItemModal(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(dimens.small3))
-
-                TextFieldCustom(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = dimens.small1),
-                    title = state.newItemName,
-                    maxInputLength = 75,
-                    onTitleChange = onNewItemNameChange,
-                    isEmptyError = state.emptyNewItemNameError,
-                    emptyPlaceholder = stringResource(R.string.item_placeholder),
-                    errorString = stringResource(R.string.item_placeholder),
-                    focusManager = focusManager,
-                    keyboardController = keyboardController
-                )
-
-                Spacer(modifier = Modifier.height(dimens.small3))
-
-                CountSlider(
-                    modifier = Modifier,
-                    liquidState = liquidState,
-                    liquidParams = liquidParams,
-                    count = state.newItemCount,
-                    onCountChange = onNewItemCountChange
-                )
-
-                Spacer(modifier = Modifier.height(dimens.small3))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    EnumDropDown(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = dimens.small1),
-                        items = UnitType.entries,
-                        onItemChanged = {
-                            onNewItemUnitChange(it as UnitType)
-                        },
-                        selectedItem = state.newItemUnit,
-                        focusManager = focusManager,
-                        keyboardController = keyboardController
-                    )
-                    Spacer(modifier = Modifier.width(dimens.small1))
+                    Spacer(modifier = Modifier.height(dimens.small3))
 
                     TextFieldCustom(
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(end = dimens.small1),
-                        title = state.newItemPrice.toString(),
-                        maxInputLength = 8,
-                        onTitleChange = {
-                            onNewItemPriceChange(it.toIntOrNull() ?: 0)
-                        },
-                        isEmptyError = false,
-                        isNumericOnly = true,
-                        emptyPlaceholder = stringResource(R.string.item_price),
-                        errorString = stringResource(R.string.empty),
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.small1),
+                        title = state.newItemName,
+                        maxInputLength = 75,
+                        onTitleChange = onNewItemNameChange,
+                        isEmptyError = state.emptyNewItemNameError,
+                        emptyPlaceholder = stringResource(R.string.item_placeholder),
+                        errorString = stringResource(R.string.item_placeholder),
                         focusManager = focusManager,
                         keyboardController = keyboardController
                     )
 
-                }
+                    Spacer(modifier = Modifier.height(dimens.small3))
 
-                Spacer(modifier = Modifier.height(dimens.small3))
+                    CountSlider(
+                        modifier = Modifier,
+                        liquidState = liquidState,
+                        liquidParams = liquidParams,
+                        count = state.newItemCount,
+                        onCountChange = onNewItemCountChange
+                    )
 
-                ScaleButtonRow(
-                    modifier = Modifier
-                        .padding(dimens.small1)
-                        .navigationBarsPadding(),
-                    liquidState = liquidState,
-                    liquidParams = liquidParams,
-                    onClick = onNewCreateConfirm
-                ) {
-                    Icon(
+                    Spacer(modifier = Modifier.height(dimens.small3))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        EnumDropDown(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = dimens.small1),
+                            items = UnitType.entries,
+                            onItemChanged = {
+                                onNewItemUnitChange(it as UnitType)
+                            },
+                            selectedItem = state.newItemUnit,
+                            focusManager = focusManager,
+                            keyboardController = keyboardController
+                        )
+                        Spacer(modifier = Modifier.width(dimens.small1))
+
+                        TextFieldCustom(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = dimens.small1),
+                            title = state.newItemPrice.toString(),
+                            maxInputLength = 8,
+                            onTitleChange = {
+                                onNewItemPriceChange(it.toIntOrNull() ?: 0)
+                            },
+                            isEmptyError = false,
+                            isNumericOnly = true,
+                            emptyPlaceholder = stringResource(R.string.item_price),
+                            errorString = stringResource(R.string.empty),
+                            focusManager = focusManager,
+                            keyboardController = keyboardController
+                        )
+
+                    }
+
+                    Spacer(modifier = Modifier.height(dimens.small3))
+
+                    ScaleButtonRow(
                         modifier = Modifier
-                            .size(dimens.regular)
-                            .padding(dimens.extraSmall2),
-                        imageVector = Icons.Filled.AddCircle,
-                        contentDescription = "add"
-                    )
-                    Text(
-                        modifier = Modifier.padding(end = dimens.small1),
-                        text = stringResource(R.string.item_create),
-                        style = MaterialTheme.typography.headlineSmall,
-                        maxLines = 1,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                            .padding(dimens.small1)
+                            .navigationBarsPadding(),
+                        liquidState = liquidState,
+                        liquidParams = liquidParams,
+                        onClick = onNewCreateConfirm
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(dimens.regular)
+                                .padding(dimens.extraSmall2),
+                            imageVector = Icons.Filled.AddCircle,
+                            contentDescription = "add"
+                        )
+                        Text(
+                            modifier = Modifier.padding(end = dimens.small1),
+                            text = stringResource(R.string.item_create),
+                            style = MaterialTheme.typography.headlineSmall,
+                            maxLines = 1,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
 
-                Spacer(modifier = Modifier.height(dimens.small3))
+                    Spacer(modifier = Modifier.height(dimens.small3))
+                }
             }
         }
     }

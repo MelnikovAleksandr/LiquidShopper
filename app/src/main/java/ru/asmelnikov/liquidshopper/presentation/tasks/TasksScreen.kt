@@ -30,9 +30,9 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -44,7 +44,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.ContentHeightMode
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -183,15 +182,15 @@ fun SharedTransitionScope.TasksScreenContent(
     )
     val coroutineScope = rememberCoroutineScope()
     val visibleMonth = rememberFirstCompletelyVisibleMonth(calendarState)
-    val selectedDayTasks = produceState<GroupedTasksByDay?>(
-        initialValue = null,
-        key1 = state.tasks,
-        key2 = state.selectedDay
-    ) {
-        value = withContext(Dispatchers.IO) {
-            state.tasks.find { it.start == state.selectedDay }
+    val selectedDayTasks by remember(state.tasks, state.selectedDay) {
+        val cache = mutableMapOf<LocalDate, GroupedTasksByDay?>()
+
+        derivedStateOf {
+            cache.getOrPut(state.selectedDay) {
+                state.tasks.find { it.start == state.selectedDay }
+            }
         }
-    }.value
+    }
 
     val density = LocalDensity.current
     val statusBarHeight = with(density) {
@@ -326,6 +325,9 @@ fun SharedTransitionScope.TasksScreenContent(
                                 ) {
                                     Box(
                                         modifier = Modifier
+                                            .aspectRatio(1f)
+                                            .fillMaxSize()
+                                            .clip(MaterialTheme.shapes.large)
                                             .liquid(
                                                 liquidState, LiquidParams(
                                                     refraction = 0.3f,
@@ -333,9 +335,6 @@ fun SharedTransitionScope.TasksScreenContent(
                                                     shape = MaterialTheme.shapes.large
                                                 ).invoke()
                                             )
-                                            .aspectRatio(1f)
-                                            .fillMaxSize()
-                                            .clip(MaterialTheme.shapes.large)
                                     )
                                 }
                             }
@@ -426,6 +425,9 @@ fun SharedTransitionScope.TasksScreenContent(
                                     ) {
                                         Box(
                                             modifier = Modifier
+                                                .aspectRatio(1f)
+                                                .fillMaxSize()
+                                                .clip(MaterialTheme.shapes.large)
                                                 .liquid(
                                                     liquidState, LiquidParams(
                                                         refraction = 0.3f,
@@ -433,9 +435,6 @@ fun SharedTransitionScope.TasksScreenContent(
                                                         shape = MaterialTheme.shapes.large
                                                     ).invoke()
                                                 )
-                                                .aspectRatio(1f)
-                                                .fillMaxSize()
-                                                .clip(MaterialTheme.shapes.large)
                                         )
                                     }
                                 }
@@ -460,27 +459,22 @@ fun SharedTransitionScope.TasksScreenContent(
             }
         }
 
-        AnimatedVisibility(
+        ScaleButtonBox(
             modifier = Modifier
                 .navigationBarsPadding()
                 .align(Alignment.BottomEnd)
-                .padding(24.dp),
-            enter = scaleIn(),
-            exit = scaleOut(),
-            visible = !scrollState.isScrollInProgress
+                .padding(dimens.medium2)
+                .size(dimens.regular),
+            liquidState = liquidState,
+            onClick = onCreateClick
         ) {
-            ScaleButtonBox(
-                modifier = Modifier.size(if (isPortrait()) dimens.large else dimens.regular),
-                liquidState = liquidState,
-                onClick = onCreateClick
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimens.medium4),
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "add",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            Icon(
+                modifier = Modifier
+                    .size(dimens.medium4),
+                imageVector = Icons.Filled.Add,
+                contentDescription = "add",
+                tint = MaterialTheme.colorScheme.onBackground
+            )
         }
     }
 }
@@ -528,7 +522,7 @@ private fun CalendarPreview1() {
 )
 @Composable
 private fun CalendarPreview2() {
-    LiquidShopperTheme(darkTheme = true) {
+    LiquidShopperTheme {
         SharedTransitionLayout(
             modifier = Modifier
                 .fillMaxSize()

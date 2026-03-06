@@ -24,6 +24,8 @@
     <string name="item_update">Изменить</string>
     <string name="item_currency">₽</string>
     <string name="items_call">Все</string>
+    <string name="items_delete">%1$s удалено</string>
+    <string name="items_delete_recall">ВОССТАНОВИТЬ?</string>
 
     <!--    Categories-->
     <string name="category_pharmacy">Аптека</string>

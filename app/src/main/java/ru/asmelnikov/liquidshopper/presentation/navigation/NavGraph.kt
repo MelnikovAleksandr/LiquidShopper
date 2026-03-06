@@ -5,6 +5,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
@@ -30,7 +31,7 @@ fun SharedTransitionScope.NavGraph(
     ) -> Unit
 ) {
     NavDisplay(
-        modifier = Modifier.padding(paddingValues),
+        modifier = Modifier.fillMaxSize().padding(paddingValues),
         backStack = appState.backStack,
         entryProvider = entryProvider {
             entry<Routes.TasksScreen> {

@@ -2,9 +2,8 @@ package ru.asmelnikov.liquidshopper.presentation.details
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +28,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -41,6 +42,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Item
 import ru.asmelnikov.liquidshopper.domain.models.UnitType
+import ru.asmelnikov.liquidshopper.domain.models.taskWithItemsMock
 import ru.asmelnikov.liquidshopper.presentation.details.components.CreateItemModal
 import ru.asmelnikov.liquidshopper.presentation.details.components.EditItemModal
 import ru.asmelnikov.liquidshopper.presentation.details.components.Header
@@ -50,9 +52,9 @@ import ru.asmelnikov.liquidshopper.presentation.details.viewmodel.ItemsState
 import ru.asmelnikov.liquidshopper.presentation.details.viewmodel.ItemsViewModel
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
 import ru.asmelnikov.liquidshopper.presentation.navigation.popUp
+import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
-import ru.asmelnikov.liquidshopper.utils.components.isPortrait
 
 @Composable
 fun SharedTransitionScope.ItemsScreen(
@@ -70,11 +72,21 @@ fun SharedTransitionScope.ItemsScreen(
     })
 ) {
     val state by viewModel.container.stateFlow.collectAsState()
-
+    val context = LocalContext.current
     viewModel.collectSideEffect {
         when (it) {
             is ItemsSideEffects.NavigateBack -> {
                 appState.popUp()
+            }
+
+            is ItemsSideEffects.DeleteSnackbarWithDismiss -> {
+                showSnackbar(
+                    it.text.asString(context),
+                    SnackbarDuration.Short,
+                    it.buttonText.asString(context)
+                ) {
+                    viewModel.recreateItem(it.item)
+                }
             }
         }
     }
@@ -142,7 +154,7 @@ fun SharedTransitionScope.ItemsScreenContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(R.drawable.details_back),
+            painter = painterResource(R.drawable.main_back),
             contentDescription = null,
             modifier = Modifier
                 .liquefiable(liquidState)
@@ -194,25 +206,92 @@ fun SharedTransitionScope.ItemsScreenContent(
         }
 
 
-        AnimatedVisibility(
+        ScaleButtonBox(
             modifier = Modifier
                 .navigationBarsPadding()
                 .align(Alignment.BottomEnd)
-                .padding(24.dp),
-            enter = scaleIn(),
-            exit = scaleOut(),
-            visible = !scrollState.isScrollInProgress
+                .padding(dimens.medium2)
+                .size(dimens.regular),
+            liquidState = liquidState,
+            onClick = onNewCreateModalShow
         ) {
-            ScaleButtonBox(
-                modifier = Modifier.size(if (isPortrait()) dimens.large else dimens.regular),
-                liquidState = liquidState,
-                onClick = onNewCreateModalShow
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimens.medium4),
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "add",
-                    tint = MaterialTheme.colorScheme.onBackground
+            Icon(
+                modifier = Modifier.size(dimens.medium4),
+                imageVector = Icons.Filled.Add,
+                contentDescription = "add",
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ItemsPreview1() {
+    LiquidShopperTheme(darkTheme = true) {
+        SharedTransitionLayout(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            AnimatedVisibility(visible = true) {
+                ItemsScreenContent(
+                    state = ItemsState(
+                        taskId = 123,
+                        task = taskWithItemsMock
+                    ),
+                    onBackClick = {},
+                    onNewCreateModalShow = {},
+                    onDismissNewCreateRequest = {},
+                    onNewItemNameChange = {},
+                    onNewItemCountChange = {},
+                    onNewItemUnitChange = {},
+                    onNewItemPriceChange = {},
+                    onNewCreateConfirm = {},
+                    onItemBoughtChange = {},
+                    onEditItem = {},
+                    onDeleteItem = {},
+                    onDismissEditModal = {},
+                    onEditConfirm = {},
+                    onItemsChangeStatusCall = {},
+                    animatedVisibilityScope = this
+                )
+            }
+        }
+    }
+}
+
+@Preview(
+    device = "spec:parent=pixel_5,orientation=landscape,navigation=buttons",
+    showSystemUi = false
+)
+@Composable
+private fun ItemsPreview2() {
+    LiquidShopperTheme {
+        SharedTransitionLayout(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            AnimatedVisibility(visible = true) {
+                ItemsScreenContent(
+                    state = ItemsState(
+                        taskId = 123,
+                        task = taskWithItemsMock
+                    ),
+                    onBackClick = {},
+                    onNewCreateModalShow = {},
+                    onDismissNewCreateRequest = {},
+                    onNewItemNameChange = {},
+                    onNewItemCountChange = {},
+                    onNewItemUnitChange = {},
+                    onNewItemPriceChange = {},
+                    onNewCreateConfirm = {},
+                    onItemBoughtChange = {},
+                    onEditItem = {},
+                    onDeleteItem = {},
+                    onDismissEditModal = {},
+                    onEditConfirm = {},
+                    onItemsChangeStatusCall = {},
+                    animatedVisibilityScope = this
                 )
             }
         }

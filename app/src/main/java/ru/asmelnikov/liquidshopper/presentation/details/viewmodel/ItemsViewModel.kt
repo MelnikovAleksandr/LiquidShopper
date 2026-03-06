@@ -4,9 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
+import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Item
 import ru.asmelnikov.liquidshopper.domain.models.UnitType
 import ru.asmelnikov.liquidshopper.domain.repository.ItemsRepository
+import ru.asmelnikov.liquidshopper.utils.locale.UiText
 import java.util.UUID
 
 class ItemsViewModel(
@@ -38,7 +40,7 @@ class ItemsViewModel(
                 isNewItemModalShow = false,
                 emptyNewItemNameError = false,
                 newItemName = "",
-                newItemCount = 0,
+                newItemCount = 1,
                 newItemUnit = UnitType.PIECES,
                 newItemPrice = 0
             )
@@ -72,8 +74,23 @@ class ItemsViewModel(
         onNewItemDismiss()
     }
 
+    fun recreateItem(item: Item) = intent {
+        itemsRepository.insertItem(item)
+    }
+
     fun onItemDelete(item: Item) = intent {
         itemsRepository.deleteItem(item)
+        postSideEffect(
+            ItemsSideEffects.DeleteSnackbarWithDismiss(
+                item = item,
+                text = UiText.StringResource(
+                    resId = R.string.items_delete, item.itemName
+                ),
+                buttonText = UiText.StringResource(
+                    resId = R.string.items_delete_recall
+                )
+            )
+        )
     }
 
     fun onItemBoughtChange(item: Item) = intent {

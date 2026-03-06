@@ -13,6 +13,8 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -101,9 +103,7 @@ fun LiquidShopperTheme(
     }
 
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val config = LocalWindowInfo.current.containerDpSize
-
-    val screenConfig = rememberScreenConfig(windowSizeClass, config)
+    val screenConfig = rememberScreenConfig(windowSizeClass)
 
     AppUtils(appDimens = screenConfig.dimens) {
         MaterialTheme(
@@ -117,14 +117,17 @@ fun LiquidShopperTheme(
 
 @Composable
 private fun rememberScreenConfig(
-    windowSizeClass: WindowSizeClass,
-    containerSize: DpSize
+    windowSizeClass: WindowSizeClass
 ): ScreenConfig {
-    return remember(windowSizeClass, containerSize) {
-        val screenWidth = containerSize.width
+    return remember(windowSizeClass) {
         when {
-            screenWidth >= 600.dp ->
+            windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND) -> {
+                ScreenConfig(ExpandedDimens, ExpandedTypography, ExpandedShapes)
+            }
+
+            windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND) -> {
                 ScreenConfig(MediumDimens, MediumTypography, MediumShapes)
+            }
 
             else -> {
                 ScreenConfig(CompactDimens, CompactTypography, CompactShapes)

@@ -178,11 +178,12 @@ private fun EnumDropDownPreview() {
             val focusManager = LocalFocusManager.current
             EnumDropDown(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(0.5f)
                     .padding(horizontal = dimens.small1),
                 items = TaskTypes.entries,
+                withIcons = true,
                 onItemChanged = {},
-                selectedItem = TaskTypes.OTHER,
+                selectedItem = TaskTypes.GARDEN,
                 focusManager = focusManager,
                 keyboardController = null
             )

@@ -11,6 +11,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +58,7 @@ import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonRow
+import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
 import java.util.UUID
 
 @Composable
@@ -100,12 +102,13 @@ fun SharedTransitionScope.Header(
             modifier = Modifier
                 .statusBarsPadding()
                 .fillMaxWidth()
-                .padding(dimens.small1),
+                .padding(dimens.small1)
+                .navigationBarsPaddingIfLandscape(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             ScaleButtonBox(
-                modifier = Modifier.size(dimens.regular),
+                modifier = Modifier.size(dimens.medium5),
                 liquidState = liquidState,
                 onClick = onBackClick
             ) {
@@ -119,7 +122,7 @@ fun SharedTransitionScope.Header(
             Spacer(modifier = Modifier.width(dimens.small3))
             ScaleButtonBox(
                 modifier = Modifier
-                    .height(dimens.regular)
+                    .height(dimens.medium5)
                     .weight(1f),
                 liquidState = liquidState,
                 enabled = false,
@@ -127,6 +130,7 @@ fun SharedTransitionScope.Header(
             ) {
                 Text(
                     modifier = Modifier
+                        .basicMarquee(Int.MAX_VALUE)
                         .sharedElement(
                             rememberSharedContentState(
                                 key = (state.task?.taskName ?: "") + state.task?.uid
@@ -153,7 +157,7 @@ fun SharedTransitionScope.Header(
                 visible = state.task != null
             ) {
                 ScaleButtonBox(
-                    modifier = Modifier.size(dimens.regular),
+                    modifier = Modifier.size(dimens.medium5),
                     liquidState = liquidState,
                     enabled = false,
                     onClick = {}
@@ -185,12 +189,13 @@ fun SharedTransitionScope.Header(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = dimens.small3)
-                .padding(bottom = dimens.extraSmall2),
+                .padding(bottom = dimens.extraSmall2)
+                .navigationBarsPaddingIfLandscape(),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             ScaleButtonRow(
-                modifier = Modifier.height(dimens.medium3),
+                modifier = Modifier.width(dimens.regular),
                 liquidState = liquidState,
                 onClick = onItemsChangeStatusCall
             ) {
@@ -244,17 +249,26 @@ fun SharedTransitionScope.Header(
             }
             Spacer(modifier = Modifier.width(dimens.extraSmall2))
             ScaleButtonBox(
-                modifier = Modifier.height(dimens.medium3),
+                modifier = Modifier.width(dimens.regular),
                 liquidState = liquidState,
                 enabled = false,
                 onClick = {}
             ) {
                 Text(
-                    modifier = Modifier.padding(horizontal = dimens.extraSmall2),
+                    modifier = Modifier
+                        .basicMarquee(Int.MAX_VALUE)
+                        .padding(horizontal = dimens.extraSmall2),
                     text = "${state.task?.sumPrice ?: 0} ${stringResource(R.string.item_currency)}",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     maxLines = 1
+                )
+                Icon(
+                    modifier = Modifier
+                        .size(dimens.medium2),
+                    imageVector = Icons.Filled.Clear,
+                    contentDescription = null,
+                    tint = Color.Transparent
                 )
             }
         }

@@ -53,6 +53,7 @@ import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonColumn
+import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
 import ru.asmelnikov.liquidshopper.utils.components.scaleindication.ScaleIndication
 import ru.asmelnikov.liquidshopper.utils.datetime.toFormattedString
 
@@ -93,12 +94,12 @@ fun SharedTransitionScope.TaskCard(
             )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().navigationBarsPaddingIfLandscape(),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.padding(top = dimens.small1, end = dimens.small1),
+                modifier = Modifier.padding(top = dimens.extraSmall2, end = dimens.small1),
                 text = task.timeStamp.toFormattedString(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSecondary
@@ -106,7 +107,7 @@ fun SharedTransitionScope.TaskCard(
         }
 
         Row(
-            modifier = Modifier,
+            modifier = Modifier.navigationBarsPaddingIfLandscape(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -169,7 +170,7 @@ fun SharedTransitionScope.TaskCard(
                 }
                 Spacer(modifier = Modifier.width(dimens.extraSmall1))
                 ScaleButtonColumn(
-                    modifier = Modifier.size(dimens.medium4),
+                    modifier = Modifier.navigationBarsPaddingIfLandscape().size(dimens.medium4),
                     liquidState = liquidState,
                     onClick = {
                         expanded = true

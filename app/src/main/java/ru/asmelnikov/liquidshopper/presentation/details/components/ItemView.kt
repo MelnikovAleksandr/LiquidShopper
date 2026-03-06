@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.fletchmckee.liquid.LiquidState
 import io.github.fletchmckee.liquid.rememberLiquidState
+import kotlinx.coroutines.launch
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Item
 import ru.asmelnikov.liquidshopper.domain.models.taskItemsMock
@@ -47,6 +49,7 @@ import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonColumn
+import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
 
 @Composable
 fun ItemView(
@@ -58,7 +61,7 @@ fun ItemView(
     onDeleteItem: (Item) -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-
+    val scope = rememberCoroutineScope()
     val swipeState = rememberSwipeToDismissBoxState(
         initialValue = SwipeToDismissBoxValue.Settled,
         positionalThreshold = { totalDistance -> totalDistance / 2f }
@@ -71,6 +74,9 @@ fun ItemView(
             .clip(RoundedCornerShape(dimens.small1)),
         onDismiss = { _ ->
             onDeleteItem(item)
+            scope.launch {
+                swipeState.snapTo(SwipeToDismissBoxValue.Settled)
+            }
         },
         backgroundContent = {},
         enableDismissFromStartToEnd = true,
@@ -153,7 +159,10 @@ fun ItemView(
                 }
 
                 ScaleButtonColumn(
-                    modifier = Modifier.padding(end = dimens.small3).size(dimens.medium4),
+                    modifier = Modifier
+                        .navigationBarsPaddingIfLandscape()
+                        .padding(end = dimens.small3)
+                        .size(dimens.medium4),
                     liquidState = liquidState,
                     onClick = {
                         expanded = true
@@ -193,10 +202,12 @@ fun ItemView(
 @Composable
 private fun ItemViewPreview1() {
     LiquidShopperTheme {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .background(MaterialTheme.colorScheme.background)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
 
             var item by remember {
                 mutableStateOf(taskItemsMock.first())
@@ -220,10 +231,12 @@ private fun ItemViewPreview1() {
 @Composable
 private fun ItemViewPreview2() {
     LiquidShopperTheme(darkTheme = true) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .background(MaterialTheme.colorScheme.background)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
 
             var item by remember {
                 mutableStateOf(taskItemsMock.first().copy(bought = true))

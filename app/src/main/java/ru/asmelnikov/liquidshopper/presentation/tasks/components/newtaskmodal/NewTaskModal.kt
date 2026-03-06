@@ -81,8 +81,7 @@ fun NewTaskModal(
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
@@ -113,78 +112,86 @@ fun NewTaskModal(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(dimens.small3))
 
-                TextFieldCustom(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = dimens.small1),
-                    title = state.title,
-                    onTitleChange = onTitleChange,
-                    isEmptyError = state.emptyTitleError,
-                    emptyPlaceholder = stringResource(R.string.task_placeholder),
-                    errorString = stringResource(R.string.task_placeholder),
-                    focusManager = focusManager,
-                    keyboardController = keyboardController
-                )
-                Spacer(modifier = Modifier.height(dimens.small3))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ScrollTimePicker(
+                    Spacer(modifier = Modifier.height(dimens.small3))
+                    TextFieldCustom(
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(start = dimens.small1),
-                        onDateChange = onTimeStampChange
-                    )
-                    Spacer(modifier = Modifier.width(dimens.small1))
-                    EnumDropDown(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = dimens.small1),
-                        items = TaskTypes.entries,
-                        onItemChanged = {
-                            onTypeChange(it as TaskTypes)
-                        },
-                        selectedItem = state.taskType,
-                        withIcons = true,
+                            .fillMaxWidth()
+                            .padding(horizontal = dimens.small1),
+                        title = state.title,
+                        onTitleChange = onTitleChange,
+                        isEmptyError = state.emptyTitleError,
+                        emptyPlaceholder = stringResource(R.string.task_placeholder),
+                        errorString = stringResource(R.string.task_placeholder),
                         focusManager = focusManager,
                         keyboardController = keyboardController
                     )
-                }
+                    Spacer(modifier = Modifier.height(dimens.small3))
 
-                Spacer(modifier = Modifier.height(dimens.small3))
-
-                ScaleButtonRow(
-                    modifier = Modifier
-                        .padding(dimens.small1)
-                        .navigationBarsPadding(),
-                    liquidState = liquidState,
-                    liquidParams = liquidParams,
-                    onClick = {
-                        onTaskCreateConfirm()
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        ScrollTimePicker(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = dimens.small1),
+                            onDateChange = onTimeStampChange
+                        )
+                        Spacer(modifier = Modifier.width(dimens.small1))
+                        EnumDropDown(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = dimens.small1),
+                            items = TaskTypes.entries,
+                            onItemChanged = {
+                                onTypeChange(it as TaskTypes)
+                            },
+                            selectedItem = state.taskType,
+                            withIcons = true,
+                            focusManager = focusManager,
+                            keyboardController = keyboardController
+                        )
                     }
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(dimens.regular)
-                            .padding(dimens.extraSmall2),
-                        imageVector = Icons.Filled.AddCircle,
-                        contentDescription = "add"
-                    )
-                    Text(
-                        modifier = Modifier.padding(end = dimens.small1),
-                        text = stringResource(R.string.task_create),
-                        style = MaterialTheme.typography.headlineSmall,
-                        maxLines = 1,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
 
-                Spacer(modifier = Modifier.height(dimens.small3))
+                    Spacer(modifier = Modifier.height(dimens.small3))
+
+                    ScaleButtonRow(
+                        modifier = Modifier
+                            .padding(dimens.small1)
+                            .navigationBarsPadding(),
+                        liquidState = liquidState,
+                        liquidParams = liquidParams,
+                        onClick = {
+                            onTaskCreateConfirm()
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(dimens.regular)
+                                .padding(dimens.extraSmall2),
+                            imageVector = Icons.Filled.AddCircle,
+                            contentDescription = "add",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                        Text(
+                            modifier = Modifier.padding(end = dimens.small1),
+                            text = stringResource(R.string.task_create),
+                            style = MaterialTheme.typography.headlineSmall,
+                            maxLines = 1,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(dimens.small3))
+                }
             }
         }
     }

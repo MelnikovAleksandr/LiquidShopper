@@ -216,7 +216,7 @@ private fun CountSliderPreview() {
         Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
 
             var count by remember {
-                mutableIntStateOf(500)
+                mutableIntStateOf(1)
             }
 
             CountSlider(

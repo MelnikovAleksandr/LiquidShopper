@@ -6,13 +6,16 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Item
+import ru.asmelnikov.liquidshopper.domain.models.Screens
 import ru.asmelnikov.liquidshopper.domain.models.UnitType
 import ru.asmelnikov.liquidshopper.domain.repository.ItemsRepository
+import ru.asmelnikov.liquidshopper.domain.repository.ScreensBackgroundRepository
 import ru.asmelnikov.liquidshopper.utils.locale.UiText
 import java.util.UUID
 
 class ItemsViewModel(
     private val itemsRepository: ItemsRepository,
+    private val screensBackgroundRepository: ScreensBackgroundRepository,
     taskId: Int,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), ContainerHost<ItemsState, ItemsSideEffects> {
@@ -23,6 +26,7 @@ class ItemsViewModel(
     )
 
     init {
+        getScreenImage()
         subscribeTask()
     }
 
@@ -132,6 +136,12 @@ class ItemsViewModel(
             if (task.items.isEmpty()) {
                 onNewItemCreateClick()
             }
+        }
+    }
+
+    private fun getScreenImage() = intent {
+        screensBackgroundRepository.getCurrentScreenData(Screens.DETAILS).collect { data ->
+            reduce { state.copy(background = data.data) }
         }
     }
 

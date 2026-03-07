@@ -27,6 +27,13 @@
     <string name="items_delete">%1$s удалено</string>
     <string name="items_delete_recall">ВОССТАНОВИТЬ?</string>
 
+    <!--    SettingsScreen-->
+    <string name="settings_title">Настройте тему оформления</string>
+    <string name="main_screen">Календарь</string>
+    <string name="details_screen">Список</string>
+    <string name="settings_screen">Настройки</string>
+    <string name="statistics_screen">Статистика</string>
+
     <!--    Categories-->
     <string name="category_pharmacy">Аптека</string>
     <string name="category_alcohol">Алкоголь</string>

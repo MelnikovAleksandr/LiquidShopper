@@ -9,4 +9,7 @@ sealed interface Routes : NavKey {
 
     @Serializable
     data class ItemsScreen(val taskId: Int) : Routes
+
+    @Serializable
+    data object SettingsScreen : Routes
 }

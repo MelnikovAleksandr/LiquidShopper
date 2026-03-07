@@ -1,7 +1,10 @@
 package ru.asmelnikov.liquidshopper.data.models
 
+import ru.asmelnikov.liquidshopper.domain.models.Background
+import ru.asmelnikov.liquidshopper.domain.models.BackgroundImage
 import ru.asmelnikov.liquidshopper.domain.models.GroupedTasksByDay
 import ru.asmelnikov.liquidshopper.domain.models.Item
+import ru.asmelnikov.liquidshopper.domain.models.Screens
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import ru.asmelnikov.liquidshopper.domain.models.UnitType
@@ -32,7 +35,8 @@ fun TaskWithItems.toTasks(): Task {
     return Task(
         uid = task.uid,
         taskName = task.taskName,
-        taskType = kotlin.runCatching { TaskTypes.valueOf(task.taskType) }.getOrDefault(TaskTypes.OTHER),
+        taskType = kotlin.runCatching { TaskTypes.valueOf(task.taskType) }
+            .getOrDefault(TaskTypes.OTHER),
         timeStamp = task.timeStamp.toLocalDateTime(),
         isCompleted = isCompleted,
         allItemsCount = allItemsCount,
@@ -42,7 +46,7 @@ fun TaskWithItems.toTasks(): Task {
     )
 }
 
-fun TaskItemEntity.toTaskItem() : Item {
+fun TaskItemEntity.toTaskItem(): Item {
     return Item(
         uid = uid,
         taskId = taskId,
@@ -54,7 +58,7 @@ fun TaskItemEntity.toTaskItem() : Item {
     )
 }
 
-fun Item.toTaskItemEntity() : TaskItemEntity {
+fun Item.toTaskItemEntity(): TaskItemEntity {
     return TaskItemEntity(
         uid = uid,
         taskId = taskId,
@@ -72,6 +76,20 @@ fun Task.toTaskEntity(): TaskEntity {
         taskName = taskName,
         taskType = taskType.name,
         timeStamp = timeStamp.toTimestamp()
+    )
+}
+
+fun ScreensBackEntity.toBackground(): Background {
+    return Background(
+        screen = Screens.fromValue(this.screenId),
+        data = BackgroundImage.fromValue(this.backImageId)
+    )
+}
+
+fun Background.toScreensBackEntity(): ScreensBackEntity {
+    return ScreensBackEntity(
+        screenId = this.screen.value,
+        backImageId = this.data.value
     )
 }
 

@@ -39,7 +39,6 @@ import io.github.fletchmckee.liquid.rememberLiquidState
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectSideEffect
-import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Item
 import ru.asmelnikov.liquidshopper.domain.models.UnitType
 import ru.asmelnikov.liquidshopper.domain.models.taskWithItemsMock
@@ -154,7 +153,7 @@ fun SharedTransitionScope.ItemsScreenContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(R.drawable.background_pattern_1),
+            painter = painterResource(state.background.drawableRes),
             contentDescription = null,
             modifier = Modifier
                 .liquefiable(liquidState)

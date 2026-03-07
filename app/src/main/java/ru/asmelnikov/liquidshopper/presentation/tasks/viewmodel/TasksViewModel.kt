@@ -5,8 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
+import ru.asmelnikov.liquidshopper.domain.models.Screens
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
+import ru.asmelnikov.liquidshopper.domain.repository.ScreensBackgroundRepository
 import ru.asmelnikov.liquidshopper.domain.repository.TasksRepository
 import ru.asmelnikov.liquidshopper.utils.intent.sharedTask
 import java.time.LocalDate
@@ -16,6 +18,7 @@ import java.util.UUID
 
 class TasksViewModel(
     private val tasksRepository: TasksRepository,
+    private val screensBackgroundRepository: ScreensBackgroundRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), ContainerHost<TasksState, TasksSideEffects> {
 
@@ -25,6 +28,7 @@ class TasksViewModel(
     )
 
     init {
+        getScreenImage()
         subscribeTasks()
     }
 
@@ -162,9 +166,19 @@ class TasksViewModel(
         postSideEffect(TasksSideEffects.NavigateToDetails(taskId = taskId))
     }
 
+    fun onSettingsClick() = intent {
+        postSideEffect(TasksSideEffects.NavigateToSettingsScreen)
+    }
+
     private fun subscribeTasks() = intent {
         tasksRepository.tasksFlow().collect { tasks ->
             reduce { state.copy(tasks = tasks) }
+        }
+    }
+
+    private fun getScreenImage() = intent {
+        screensBackgroundRepository.getCurrentScreenData(Screens.MAIN).collect { data ->
+            reduce { state.copy(background = data.data) }
         }
     }
 

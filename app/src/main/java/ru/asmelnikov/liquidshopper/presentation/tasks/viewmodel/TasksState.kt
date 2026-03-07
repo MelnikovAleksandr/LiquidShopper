@@ -8,6 +8,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import kotlinx.parcelize.Parcelize
 import android.os.Parcelable
+import ru.asmelnikov.liquidshopper.domain.models.Background
+import ru.asmelnikov.liquidshopper.domain.models.BackgroundImage
 
 @Immutable
 @Parcelize
@@ -25,9 +27,12 @@ data class TasksState(
     val editTitle: String = "",
     val editType: TaskTypes = TaskTypes.OTHER,
     val editDateTime: LocalDateTime = LocalDateTime.now(),
-    val emptyEditTitleError: Boolean = false
-): Parcelable
+    val emptyEditTitleError: Boolean = false,
+    val background: BackgroundImage = BackgroundImage.BACKGROUND_PATTERN_1
+) : Parcelable
 
 sealed class TasksSideEffects {
     data class NavigateToDetails(val taskId: Int) : TasksSideEffects()
+    data object NavigateToSettingsScreen : TasksSideEffects()
+    data object NavigateToStatisticsScreen : TasksSideEffects()
 }

@@ -17,6 +17,7 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import ru.asmelnikov.liquidshopper.presentation.details.ItemsScreen
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
+import ru.asmelnikov.liquidshopper.presentation.settings.SettingsScreen
 import ru.asmelnikov.liquidshopper.presentation.tasks.TasksScreen
 
 @Composable
@@ -31,7 +32,9 @@ fun SharedTransitionScope.NavGraph(
     ) -> Unit
 ) {
     NavDisplay(
-        modifier = Modifier.fillMaxSize().padding(paddingValues),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
         backStack = appState.backStack,
         entryProvider = entryProvider {
             entry<Routes.TasksScreen> {
@@ -48,6 +51,12 @@ fun SharedTransitionScope.NavGraph(
                     showSnackbar = showSnackbar,
                     taskId = it.taskId,
                     animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                )
+            }
+
+            entry<Routes.SettingsScreen> {
+                SettingsScreen(
+                    appState = appState
                 )
             }
         },

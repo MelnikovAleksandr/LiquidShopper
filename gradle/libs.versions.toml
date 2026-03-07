@@ -1,5 +1,6 @@
 [versions]
 agp = "8.12.3"
+constraintlayoutCompose = "1.1.1"
 datetimeWheelPicker = "1.1.0"
 haze = "1.7.2"
 kotlin = "2.3.10"
@@ -26,6 +27,7 @@ room = "2.8.4"
 calendar = "2.10.0"
 
 [libraries]
+androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 datetime-wheel-picker = { module = "io.github.darkokoa:datetime-wheel-picker", version.ref = "datetimeWheelPicker" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }

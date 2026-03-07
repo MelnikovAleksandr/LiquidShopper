@@ -1,7 +1,16 @@
 package ru.asmelnikov.liquidshopper.domain.models
 
+import android.os.Parcelable
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import kotlinx.parcelize.Parcelize
 import ru.asmelnikov.liquidshopper.R
+
+@Parcelize
+data class Background(
+    val screen: Screens,
+    val data: BackgroundImage
+) : Parcelable
 
 enum class BackgroundImage(
     @DrawableRes val drawableRes: Int,
@@ -24,5 +33,17 @@ enum class BackgroundImage(
     companion object {
         fun fromValue(value: Int): BackgroundImage =
             entries.find { it.value == value } ?: BACKGROUND_PATTERN_1
+    }
+}
+
+enum class Screens(@StringRes val stringRes: Int, val value: Int) {
+    MAIN(R.string.main_screen, 1),
+    DETAILS(R.string.details_screen, 2),
+    STATISTICS(R.string.statistics_screen, 3),
+    SETTINGS(R.string.settings_screen, 4);
+
+    companion object {
+        fun fromValue(value: Int): Screens =
+            Screens.entries.find { it.value == value } ?: MAIN
     }
 }

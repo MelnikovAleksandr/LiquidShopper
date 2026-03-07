@@ -17,14 +17,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
@@ -64,13 +58,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
-import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.GroupedTasksByDay
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
 import ru.asmelnikov.liquidshopper.presentation.navigation.Routes
 import ru.asmelnikov.liquidshopper.presentation.navigation.navigate
+import ru.asmelnikov.liquidshopper.presentation.tasks.components.MultiButton
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.ChoseMonthDialog
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.Day
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.calendar.MonthsCalendarTitle
@@ -82,9 +76,7 @@ import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksSideEffects
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksState
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksViewModel
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
-import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
 import ru.asmelnikov.liquidshopper.utils.components.isPortrait
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -111,6 +103,12 @@ fun SharedTransitionScope.TasksScreen(
             is TasksSideEffects.NavigateToDetails -> {
                 appState.navigate(route = Routes.ItemsScreen(taskId = it.taskId))
             }
+            TasksSideEffects.NavigateToSettingsScreen -> {
+                appState.navigate(route = Routes.SettingsScreen)
+            }
+            TasksSideEffects.NavigateToStatisticsScreen -> {
+
+            }
         }
     }
 
@@ -136,6 +134,7 @@ fun SharedTransitionScope.TasksScreen(
             viewModel.onTaskShare(task = task, context = context)
         },
         onDetails = viewModel::navigateToDetails,
+        onSettingsClick = viewModel::onSettingsClick,
         isPortrait = isPortrait(),
         animatedVisibilityScope = animatedVisibilityScope
     )
@@ -163,6 +162,7 @@ fun SharedTransitionScope.TasksScreenContent(
     onTaskUpdateConfirm: () -> Unit,
     onTaskShare: (Task) -> Unit,
     onDetails: (Int) -> Unit,
+    onSettingsClick: () -> Unit,
     isPortrait: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
@@ -233,7 +233,7 @@ fun SharedTransitionScope.TasksScreenContent(
     Box(modifier = Modifier.fillMaxSize()) {
 
         Image(
-            painter = painterResource(R.drawable.background_pattern_1),
+            painter = painterResource(state.background.drawableRes),
             contentDescription = null,
             modifier = Modifier
                 .liquefiable(liquidState)
@@ -459,23 +459,14 @@ fun SharedTransitionScope.TasksScreenContent(
             }
         }
 
-        ScaleButtonBox(
+        MultiButton(
             modifier = Modifier
-                .navigationBarsPadding()
-                .align(Alignment.BottomEnd)
-                .padding(dimens.medium2)
-                .size(dimens.regular),
+                .align(Alignment.BottomEnd),
             liquidState = liquidState,
-            onClick = onCreateClick
-        ) {
-            Icon(
-                modifier = Modifier
-                    .size(dimens.medium4),
-                imageVector = Icons.Filled.Add,
-                contentDescription = "add",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
+            onCreateClick = onCreateClick,
+            onSettingsClick = onSettingsClick,
+            onStatisticsClick = {}
+        )
     }
 }
 
@@ -508,6 +499,7 @@ private fun CalendarPreview1() {
                     onTaskUpdateConfirm = {},
                     onTaskShare = {},
                     onDetails = {},
+                    onSettingsClick = {},
                     isPortrait = true,
                     animatedVisibilityScope = this
                 )
@@ -548,6 +540,7 @@ private fun CalendarPreview2() {
                     onTaskUpdateConfirm = {},
                     onTaskShare = {},
                     onDetails = {},
+                    onSettingsClick = {},
                     isPortrait = false,
                     animatedVisibilityScope = this
                 )

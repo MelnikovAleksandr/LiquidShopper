@@ -7,8 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +35,12 @@ class MainActivity : ComponentActivity() {
                     contentWindowInsets = WindowInsets(0.dp),
                     containerColor = MaterialTheme.colorScheme.background,
                     snackbarHost = {
-                        SnackbarHost(appState.snackbarState)
+                        SnackbarHost(appState.snackbarState) {
+                            Snackbar(
+                                snackbarData = it,
+                                modifier = Modifier.navigationBarsPadding()
+                            )
+                        }
                     }
                 ) { paddingValues ->
                     SharedTransitionLayout {

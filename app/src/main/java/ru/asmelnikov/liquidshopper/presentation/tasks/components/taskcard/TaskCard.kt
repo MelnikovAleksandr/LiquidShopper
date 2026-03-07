@@ -135,6 +135,7 @@ fun SharedTransitionScope.TaskCard(
                 text = task.taskName,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
+                maxLines = 15,
                 overflow = TextOverflow.Ellipsis
             )
 

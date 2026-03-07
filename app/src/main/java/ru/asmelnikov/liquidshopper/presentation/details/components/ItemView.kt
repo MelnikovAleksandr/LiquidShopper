@@ -1,23 +1,31 @@
 package ru.asmelnikov.liquidshopper.presentation.details.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -64,7 +72,7 @@ fun ItemView(
     val scope = rememberCoroutineScope()
     val swipeState = rememberSwipeToDismissBoxState(
         initialValue = SwipeToDismissBoxValue.Settled,
-        positionalThreshold = { totalDistance -> totalDistance / 2f }
+        positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
     )
 
     SwipeToDismissBox(
@@ -72,13 +80,31 @@ fun ItemView(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(dimens.small1)),
-        onDismiss = { _ ->
-            onDeleteItem(item)
-            scope.launch {
-                swipeState.snapTo(SwipeToDismissBoxValue.Settled)
+        onDismiss = { dismissValue ->
+            when (dismissValue) {
+                SwipeToDismissBoxValue.StartToEnd -> {
+                    scope.launch {
+                        swipeState.reset()
+                        onItemBoughtChange(item.copy(bought = !item.bought))
+                    }
+                }
+
+                SwipeToDismissBoxValue.EndToStart -> {
+                    scope.launch {
+                        swipeState.reset()
+                        onDeleteItem(item)
+                    }
+                }
+
+                SwipeToDismissBoxValue.Settled -> {}
             }
         },
-        backgroundContent = {},
+        backgroundContent = {
+            BackgroundSwipeContent(
+                swipeState.dismissDirection,
+                item.bought
+            )
+        },
         enableDismissFromStartToEnd = true,
         enableDismissFromEndToStart = true
     ) {
@@ -193,6 +219,66 @@ fun ItemView(
                 }
 
 
+            }
+        }
+    }
+}
+
+@Composable
+private fun BackgroundSwipeContent(
+    swipeDirection: SwipeToDismissBoxValue,
+    isChecked: Boolean
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = dimens.medium2),
+        contentAlignment = when (swipeDirection) {
+            SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+            SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+            SwipeToDismissBoxValue.Settled -> Alignment.Center
+        }
+    ) {
+        AnimatedVisibility(
+            visible = swipeDirection != SwipeToDismissBoxValue.Settled,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            if (swipeDirection == SwipeToDismissBoxValue.StartToEnd) {
+                Box(
+                    modifier = Modifier
+                        .size(dimens.medium4)
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (isChecked) Icons.Filled.Clear else Icons.Filled.Check,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(dimens.medium3)
+                    )
+                }
+            } else if (swipeDirection == SwipeToDismissBoxValue.EndToStart) {
+                Box(
+                    modifier = Modifier
+                        .navigationBarsPaddingIfLandscape()
+                        .size(dimens.medium4)
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(dimens.medium3)
+                    )
+                }
             }
         }
     }

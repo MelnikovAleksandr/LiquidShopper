@@ -154,7 +154,7 @@ fun SharedTransitionScope.ItemsScreenContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(R.drawable.main_back),
+            painter = painterResource(R.drawable.background_pattern_1),
             contentDescription = null,
             modifier = Modifier
                 .liquefiable(liquidState)

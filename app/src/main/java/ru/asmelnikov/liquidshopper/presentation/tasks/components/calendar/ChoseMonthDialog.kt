@@ -37,11 +37,12 @@ fun ChoseMonthDialog(
     onDismissRequest: () -> Unit,
     chosenMonth: (LocalDate) -> Unit
 ) {
-    var chosenDate by remember {
-        mutableStateOf(LocalDate.now())
-    }
-
     if (state.isShowSelectMonthDialog) {
+
+        var chosenDate by remember {
+            mutableStateOf(LocalDate.now())
+        }
+
         Dialog(
             onDismissRequest = onDismissRequest,
             properties = DialogProperties(),

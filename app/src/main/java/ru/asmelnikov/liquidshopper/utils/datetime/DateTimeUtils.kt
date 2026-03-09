@@ -11,6 +11,7 @@ import java.util.Locale
 
 private const val FULL_DATE_TIME = "dd.MM.yy HH:mm"
 private const val TITLE_DATE = "d MMMM"
+const val PERIOD = "dd.MM.yyyy"
 
 fun LocalDateTime.toFormattedString(): String {
     val formatter = DateTimeFormatter.ofPattern(FULL_DATE_TIME)
@@ -18,7 +19,7 @@ fun LocalDateTime.toFormattedString(): String {
 }
 
 fun LocalDate.toDayMonthString(): String {
-    val formatter = DateTimeFormatter.ofPattern(TITLE_DATE, Locale.forLanguageTag("ru"))
+    val formatter = DateTimeFormatter.ofPattern(TITLE_DATE, Locale.getDefault())
     return this.format(formatter).replaceFirstChar { it.uppercase() }
 }
 

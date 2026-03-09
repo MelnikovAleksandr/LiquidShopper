@@ -12,4 +12,7 @@ sealed interface Routes : NavKey {
 
     @Serializable
     data object SettingsScreen : Routes
+
+    @Serializable
+    data object StatisticsScreen : Routes
 }

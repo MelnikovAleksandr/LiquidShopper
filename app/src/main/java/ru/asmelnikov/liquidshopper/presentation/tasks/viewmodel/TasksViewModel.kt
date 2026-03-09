@@ -170,6 +170,10 @@ class TasksViewModel(
         postSideEffect(TasksSideEffects.NavigateToSettingsScreen)
     }
 
+    fun onStatisticsClick() = intent {
+        postSideEffect(TasksSideEffects.NavigateToStatisticsScreen)
+    }
+
     private fun subscribeTasks() = intent {
         tasksRepository.tasksFlow().collect { tasks ->
             reduce { state.copy(tasks = tasks) }

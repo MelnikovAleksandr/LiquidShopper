@@ -18,6 +18,17 @@ interface TasksDao {
     @Query("SELECT * FROM taskentity ORDER BY timeStamp DESC")
     fun getAllTasksWithItemsFlow(): Flow<List<TaskWithItems>>
 
+    @Transaction
+    @Query("""
+        SELECT * FROM taskentity 
+        WHERE timeStamp BETWEEN :startDate AND :endDate 
+        ORDER BY timeStamp DESC
+    """)
+    suspend fun getTasksWithItemsInPeriod(
+        startDate: Long,
+        endDate: Long
+    ): List<TaskWithItems>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: TaskEntity)
 

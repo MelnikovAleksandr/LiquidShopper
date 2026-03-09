@@ -11,6 +11,7 @@ import ru.asmelnikov.liquidshopper.domain.models.UnitType
 import ru.asmelnikov.liquidshopper.domain.repository.ItemsRepository
 import ru.asmelnikov.liquidshopper.domain.repository.ScreensBackgroundRepository
 import ru.asmelnikov.liquidshopper.utils.locale.UiText
+import java.time.LocalDateTime
 import java.util.UUID
 
 class ItemsViewModel(
@@ -148,6 +149,7 @@ class ItemsViewModel(
     private fun createNewItem(state: ItemsState): Item {
         return Item(
             uid = UUID.randomUUID().hashCode(),
+            timeStamp = state.task?.timeStamp ?: LocalDateTime.now(),
             taskId = state.taskId,
             itemName = state.newItemName,
             count = state.newItemCount,

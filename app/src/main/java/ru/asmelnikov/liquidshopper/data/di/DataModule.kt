@@ -5,9 +5,11 @@ import org.koin.dsl.module
 import ru.asmelnikov.liquidshopper.data.local.ShopperDatabase
 import ru.asmelnikov.liquidshopper.data.repository.ItemsRepositoryImpl
 import ru.asmelnikov.liquidshopper.data.repository.ScreensBackgroundRepositoryImpl
+import ru.asmelnikov.liquidshopper.data.repository.StatisticsRepositoryImpl
 import ru.asmelnikov.liquidshopper.data.repository.TasksRepositoryImpl
 import ru.asmelnikov.liquidshopper.domain.repository.ItemsRepository
 import ru.asmelnikov.liquidshopper.domain.repository.ScreensBackgroundRepository
+import ru.asmelnikov.liquidshopper.domain.repository.StatisticsRepository
 import ru.asmelnikov.liquidshopper.domain.repository.TasksRepository
 
 private const val DB_NAME = "shopper_database"
@@ -32,6 +34,12 @@ val dataModule = module {
     single<ItemsRepository> {
         ItemsRepositoryImpl(
             itemsDao = get<ShopperDatabase>().getItemsDao()
+        )
+    }
+
+    single<StatisticsRepository> {
+        StatisticsRepositoryImpl(
+            tasksDao = get<ShopperDatabase>().getTasksDao()
         )
     }
 

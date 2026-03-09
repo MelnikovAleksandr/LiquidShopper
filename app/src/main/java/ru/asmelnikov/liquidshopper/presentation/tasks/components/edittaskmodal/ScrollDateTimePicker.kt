@@ -12,6 +12,7 @@ import dev.darkokoa.datetimewheelpicker.WheelDateTimePicker
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toKotlinLocalDateTime
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Composable
@@ -32,7 +33,7 @@ fun ScrollDateTimePicker(
                 height = 168.dp
             ),
             startDateTime = startDateTime.toKotlinLocalDateTime(),
-            yearsRange = IntRange(1999, 2050),
+            yearsRange = IntRange(LocalDate.now().minusYears(25).year, LocalDate.now().plusYears(25).year),
             textStyle = MaterialTheme.typography.titleLarge,
             textColor = MaterialTheme.colorScheme.onBackground,
             selectorProperties = WheelPickerDefaults.selectorProperties(

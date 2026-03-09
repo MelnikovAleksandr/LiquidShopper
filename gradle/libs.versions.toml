@@ -1,5 +1,6 @@
 [versions]
 agp = "8.12.3"
+chartsPie = "2.2.0"
 constraintlayoutCompose = "1.1.1"
 datetimeWheelPicker = "1.1.0"
 haze = "1.7.2"
@@ -29,6 +30,7 @@ calendar = "2.10.0"
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+charts-pie = { module = "io.github.dautovicharis:charts-pie", version.ref = "chartsPie" }
 datetime-wheel-picker = { module = "io.github.darkokoa:datetime-wheel-picker", version.ref = "datetimeWheelPicker" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

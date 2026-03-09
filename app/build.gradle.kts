@@ -116,6 +116,9 @@ dependencies {
     implementation(libs.datetime.wheel.picker)
     implementation(libs.kotlinx.datetime)
 
+    // chart
+    implementation(libs.charts.pie)
+
     // test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

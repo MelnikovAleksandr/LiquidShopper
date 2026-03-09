@@ -6,6 +6,7 @@ import java.util.UUID
 val taskItemsMock = listOf(
     Item(
         uid = UUID.randomUUID().hashCode(),
+        timeStamp = LocalDateTime.now(),
         taskId = UUID.randomUUID().hashCode(),
         itemName = "Молоко",
         count = 13,
@@ -15,6 +16,7 @@ val taskItemsMock = listOf(
     ),
     Item(
         uid = UUID.randomUUID().hashCode(),
+        timeStamp = LocalDateTime.now(),
         taskId = UUID.randomUUID().hashCode(),
         itemName = "",
         count = 1,
@@ -24,6 +26,7 @@ val taskItemsMock = listOf(
     ),
     Item(
         uid = UUID.randomUUID().hashCode(),
+        timeStamp = LocalDateTime.now(),
         taskId = UUID.randomUUID().hashCode(),
         itemName = "",
         count = 1,
@@ -33,6 +36,7 @@ val taskItemsMock = listOf(
     ),
     Item(
         uid = UUID.randomUUID().hashCode(),
+        timeStamp = LocalDateTime.now(),
         taskId = UUID.randomUUID().hashCode(),
         itemName = "",
         count = 1,
@@ -42,6 +46,7 @@ val taskItemsMock = listOf(
     ),
     Item(
         uid = UUID.randomUUID().hashCode(),
+        timeStamp = LocalDateTime.now(),
         taskId = UUID.randomUUID().hashCode(),
         itemName = "",
         count = 1,

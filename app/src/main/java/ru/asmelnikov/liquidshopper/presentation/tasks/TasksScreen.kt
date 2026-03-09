@@ -103,11 +103,13 @@ fun SharedTransitionScope.TasksScreen(
             is TasksSideEffects.NavigateToDetails -> {
                 appState.navigate(route = Routes.ItemsScreen(taskId = it.taskId))
             }
+
             TasksSideEffects.NavigateToSettingsScreen -> {
                 appState.navigate(route = Routes.SettingsScreen)
             }
-            TasksSideEffects.NavigateToStatisticsScreen -> {
 
+            TasksSideEffects.NavigateToStatisticsScreen -> {
+                appState.navigate(route = Routes.StatisticsScreen)
             }
         }
     }
@@ -135,6 +137,7 @@ fun SharedTransitionScope.TasksScreen(
         },
         onDetails = viewModel::navigateToDetails,
         onSettingsClick = viewModel::onSettingsClick,
+        onStatisticsClick = viewModel::onStatisticsClick,
         isPortrait = isPortrait(),
         animatedVisibilityScope = animatedVisibilityScope
     )
@@ -163,6 +166,7 @@ fun SharedTransitionScope.TasksScreenContent(
     onTaskShare: (Task) -> Unit,
     onDetails: (Int) -> Unit,
     onSettingsClick: () -> Unit,
+    onStatisticsClick: () -> Unit,
     isPortrait: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
@@ -465,7 +469,7 @@ fun SharedTransitionScope.TasksScreenContent(
             liquidState = liquidState,
             onCreateClick = onCreateClick,
             onSettingsClick = onSettingsClick,
-            onStatisticsClick = {}
+            onStatisticsClick = onStatisticsClick
         )
     }
 }
@@ -500,6 +504,7 @@ private fun CalendarPreview1() {
                     onTaskShare = {},
                     onDetails = {},
                     onSettingsClick = {},
+                    onStatisticsClick = {},
                     isPortrait = true,
                     animatedVisibilityScope = this
                 )
@@ -541,6 +546,7 @@ private fun CalendarPreview2() {
                     onTaskShare = {},
                     onDetails = {},
                     onSettingsClick = {},
+                    onStatisticsClick = {},
                     isPortrait = false,
                     animatedVisibilityScope = this
                 )

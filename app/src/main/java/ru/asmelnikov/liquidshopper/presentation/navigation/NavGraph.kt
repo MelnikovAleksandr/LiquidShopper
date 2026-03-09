@@ -18,6 +18,7 @@ import androidx.navigation3.ui.NavDisplay
 import ru.asmelnikov.liquidshopper.presentation.details.ItemsScreen
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
 import ru.asmelnikov.liquidshopper.presentation.settings.SettingsScreen
+import ru.asmelnikov.liquidshopper.presentation.statistics.StatisticsScreen
 import ru.asmelnikov.liquidshopper.presentation.tasks.TasksScreen
 
 @Composable
@@ -56,6 +57,12 @@ fun SharedTransitionScope.NavGraph(
 
             entry<Routes.SettingsScreen> {
                 SettingsScreen(
+                    appState = appState
+                )
+            }
+
+            entry<Routes.StatisticsScreen> {
+                StatisticsScreen(
                     appState = appState
                 )
             }

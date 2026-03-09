@@ -87,8 +87,8 @@ fun SharedTransitionScope.TaskCard(
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
-                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f)
+                        task.taskType.color.copy(alpha = 0.7f),
+                        task.taskType.color.copy(alpha = 0.4f)
                     )
                 )
             )

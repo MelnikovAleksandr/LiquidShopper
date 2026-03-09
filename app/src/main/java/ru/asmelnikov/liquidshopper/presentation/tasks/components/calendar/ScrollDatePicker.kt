@@ -29,7 +29,7 @@ fun ScrollDatePicker(
                 width = maxWidth,
                 height = 168.dp
             ),
-            yearsRange = IntRange(1999, 2050),
+            yearsRange = IntRange(LocalDate.now().minusYears(25).year, LocalDate.now().plusYears(25).year),
             textStyle = MaterialTheme.typography.titleLarge,
             textColor = MaterialTheme.colorScheme.onBackground,
             selectorProperties = WheelPickerDefaults.selectorProperties(

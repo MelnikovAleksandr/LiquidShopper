@@ -2,9 +2,11 @@ package ru.asmelnikov.liquidshopper.data.models
 
 import ru.asmelnikov.liquidshopper.domain.models.Background
 import ru.asmelnikov.liquidshopper.domain.models.BackgroundImage
+import ru.asmelnikov.liquidshopper.domain.models.GroupedItemsByDay
 import ru.asmelnikov.liquidshopper.domain.models.GroupedTasksByDay
 import ru.asmelnikov.liquidshopper.domain.models.Item
 import ru.asmelnikov.liquidshopper.domain.models.Screens
+import ru.asmelnikov.liquidshopper.domain.models.Statistic
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import ru.asmelnikov.liquidshopper.domain.models.UnitType
@@ -27,7 +29,7 @@ fun List<TaskWithItems>.toGroupedTasksByDay(): List<GroupedTasksByDay> {
 }
 
 fun TaskWithItems.toTasks(): Task {
-    val itemsDomain = items.map { it.toTaskItem() }.sortedBy { it.bought }
+    val itemsDomain = items.map { it.toTaskItem(task.timeStamp) }.sortedBy { it.bought }
     val allItemsCount = itemsDomain.count()
     val inProgressItemsCount = itemsDomain.count { it.bought }
     val isCompleted = allItemsCount > 0 && allItemsCount == inProgressItemsCount
@@ -46,9 +48,10 @@ fun TaskWithItems.toTasks(): Task {
     )
 }
 
-fun TaskItemEntity.toTaskItem(): Item {
+fun TaskItemEntity.toTaskItem(timeStamp: Long): Item {
     return Item(
         uid = uid,
+        timeStamp = timeStamp.toLocalDateTime(),
         taskId = taskId,
         itemName = itemName,
         count = count,
@@ -90,6 +93,42 @@ fun Background.toScreensBackEntity(): ScreensBackEntity {
     return ScreensBackEntity(
         screenId = this.screen.value,
         backImageId = this.data.value
+    )
+}
+
+fun List<TaskWithItems>.toStatistics(): Statistic {
+    val dataMapSet = mutableMapOf<TaskTypes, Int>()
+    val legendMapSet = mutableMapOf<TaskTypes, Int>()
+
+    this.forEach { taskWithItems ->
+        val type = TaskTypes.valueOf(taskWithItems.task.taskType)
+
+        dataMapSet[type] = dataMapSet.getOrDefault(type, 0) + 1
+
+        val sum = taskWithItems.items.sumOf { it.price * it.count }
+        legendMapSet[type] = legendMapSet.getOrDefault(type, 0) + sum
+    }
+
+    val itemsByDay = this
+        .filter { it.items.isNotEmpty() }
+        .groupBy { taskWithItems ->
+            taskWithItems.task.timeStamp.toLocalDateTime().toLocalDate()
+        }
+        .map { (date, tasksWithItems) ->
+            GroupedItemsByDay(
+                day = date,
+                itemsCount = tasksWithItems.sumOf { it.items.size },
+                items = tasksWithItems.flatMap { taskWithItems ->
+                    taskWithItems.items.map { it.toTaskItem(taskWithItems.task.timeStamp) }
+                }
+            )
+        }
+        .sortedBy { it.day }
+
+    return Statistic(
+        dataMapSet = dataMapSet,
+        legendMapSet = legendMapSet,
+        itemsByDay = itemsByDay
     )
 }
 

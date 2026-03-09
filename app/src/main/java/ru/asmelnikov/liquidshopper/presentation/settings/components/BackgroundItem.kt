@@ -116,9 +116,9 @@ fun BackgroundItem(
                     text = {
                         Box(
                             modifier = Modifier
+                                .padding(dimens.extraSmall1)
                                 .width(dimens.large)
                                 .height(dimens.medium4)
-                                .padding(dimens.extraSmall1)
                         ) {
                             Image(
                                 modifier = Modifier

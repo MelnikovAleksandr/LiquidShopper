@@ -2,17 +2,16 @@ package ru.asmelnikov.liquidshopper.presentation.settings.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -25,13 +24,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.fletchmckee.liquid.liquefiable
+import io.github.fletchmckee.liquid.liquid
 import io.github.fletchmckee.liquid.rememberLiquidState
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Background
@@ -51,55 +50,44 @@ fun BackgroundItem(
         mutableStateOf(false)
     }
 
+    val liquidState = rememberLiquidState()
+
 
     Box(
         modifier = modifier
-            .padding(horizontal = dimens.small1)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(dimens.small1))
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                    )
-                )
-            )
+            .clip(MaterialTheme.shapes.large)
+            .border(dimens.borderSize, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.large)
+            .fillMaxWidth(0.4f)
+            .fillMaxHeight(0.4f)
             .clickable {
                 isContextMenuVisible = !isContextMenuVisible
             }
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
 
+        Image(
+            painter = painterResource(background.data.drawableRes),
+            contentDescription = null,
+            modifier = Modifier
+                .liquefiable(liquidState)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(dimens.extraSmall2)
+                .align(Alignment.TopCenter)
+                .liquid(liquidState),
+        ) {
             Text(
-                modifier = Modifier
-                    .padding(dimens.small1),
+                modifier = Modifier.padding(dimens.extraSmall1),
                 text = stringResource(background.screen.stringRes),
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            
-            Box(
-                modifier = Modifier
-                    .padding(dimens.small1)
-                    .background(MaterialTheme.colorScheme.background, shape = MaterialTheme.shapes.medium)
-                    .size(dimens.regular)
-                    .clip(MaterialTheme.shapes.medium)
-            ) {
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(background.data.drawableRes),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-            }
-
         }
+
         DropdownMenu(
             expanded = isContextMenuVisible,
             containerColor = MaterialTheme.colorScheme.background,

@@ -4,21 +4,21 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import io.github.fletchmckee.liquid.liquefiable
@@ -33,7 +33,7 @@ import ru.asmelnikov.liquidshopper.presentation.settings.components.Header
 import ru.asmelnikov.liquidshopper.presentation.settings.viewmodel.SettingsSideEffects
 import ru.asmelnikov.liquidshopper.presentation.settings.viewmodel.SettingsState
 import ru.asmelnikov.liquidshopper.presentation.settings.viewmodel.SettingsViewModel
-import java.util.UUID
+import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 
 @Composable
 fun SettingsScreen(
@@ -62,10 +62,8 @@ fun SettingsScreenContent(
     onBackChange: (Background) -> Unit,
     onBackClick: () -> Unit
 ) {
-    val scrollState = rememberLazyListState()
     val liquidState = rememberLiquidState()
     val hazeState = rememberHazeState()
-
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(state.background.drawableRes),
@@ -78,37 +76,38 @@ fun SettingsScreenContent(
             contentScale = ContentScale.Crop
         )
 
-        LazyColumn(
-            modifier = Modifier
-                .liquefiable(liquidState)
-                .fillMaxSize(),
-            state = scrollState,
-            verticalArrangement = Arrangement.spacedBy(26.dp)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            stickyHeader {
-                Header(
-                    hazeState = hazeState,
-                    liquidState = liquidState,
-                    onBackClick = onBackClick
-                )
-            }
-            items(items = state.backgrounds, key = { UUID.randomUUID() }) { item ->
-                BackgroundItem(
-                    modifier = Modifier
-                        .animateItem()
-                        .hazeSource(state = hazeState),
-                    background = item,
-                    onBackChange = onBackChange
-                )
-            }
+            Header(
+                hazeState = hazeState,
+                liquidState = liquidState,
+                onBackClick = onBackClick
+            )
+            Spacer(
+                modifier = Modifier
+                    .height(dimens.medium2)
+                    .navigationBarsPadding()
+            )
+            FlowRow(
+                modifier = Modifier.fillMaxSize(),
+                maxItemsInEachRow = 2,
+                verticalArrangement = Arrangement.spacedBy(dimens.small3),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
 
-            item {
-                Spacer(
-                    modifier = Modifier
-                        .height((24 + 80).dp)
-                        .navigationBarsPadding()
-                )
+                state.backgrounds.forEach { item ->
+                    BackgroundItem(
+                        modifier = Modifier,
+                        background = item,
+                        onBackChange = onBackChange
+                    )
+                }
             }
+            Spacer(
+                modifier = Modifier.navigationBarsPadding()
+            )
         }
     }
 }

@@ -187,6 +187,7 @@ fun StatisticsScreenContent(
                     AnimatedVisibility(visible = state.statistic != null) {
                         state.statistic?.let {
                             FlowRowItems(
+                                modifier = Modifier.hazeSource(state = hazeState),
                                 items = state.statistic
                             )
                         }

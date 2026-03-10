@@ -59,7 +59,7 @@ class StatisticsViewModel(
     }
 
     private fun getScreenImage() = intent {
-        screensBackgroundRepository.getCurrentScreenData(Screens.DETAILS).collect { data ->
+        screensBackgroundRepository.getCurrentScreenData(Screens.STATISTICS).collect { data ->
             reduce { state.copy(background = data.data) }
         }
     }

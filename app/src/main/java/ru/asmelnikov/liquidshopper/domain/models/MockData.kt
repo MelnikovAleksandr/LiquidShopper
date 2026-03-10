@@ -2,6 +2,7 @@ package ru.asmelnikov.liquidshopper.domain.models
 
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlin.random.Random
 
 val taskItemsMock = listOf(
     Item(
@@ -83,3 +84,7 @@ val taskWithItemsMock = Task(
 val tasksListMock = listOf(
     taskWithItemsMock, taskWithItemsMock, taskWithItemsMock.copy(isCompleted = false), taskWithItemsMock.copy(isCompleted = false), taskWithItemsMock.copy(isCompleted = false)
 )
+
+val legendMapSetMock: Map<TaskTypes, Int> = TaskTypes.entries.associateWith {
+    Random.nextInt(200, 100000)
+}

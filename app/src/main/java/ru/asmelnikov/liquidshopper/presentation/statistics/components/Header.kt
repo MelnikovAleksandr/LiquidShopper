@@ -45,7 +45,7 @@ import ru.asmelnikov.liquidshopper.presentation.statistics.viewmodel.StatisticsS
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
-import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
+import ru.asmelnikov.liquidshopper.utils.components.safeDrawingEndPaddingIfLandscape
 
 
 @Composable
@@ -69,7 +69,7 @@ fun Header(
                 .statusBarsPadding()
                 .fillMaxWidth()
                 .padding(dimens.small1)
-                .navigationBarsPaddingIfLandscape(),
+                .safeDrawingEndPaddingIfLandscape(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {

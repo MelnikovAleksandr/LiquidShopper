@@ -2,7 +2,6 @@ package ru.asmelnikov.liquidshopper.presentation.settings.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +42,7 @@ import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
-import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
+import ru.asmelnikov.liquidshopper.utils.components.safeDrawingEndPaddingIfLandscape
 
 @Composable
 fun Header(
@@ -64,7 +63,7 @@ fun Header(
                 .statusBarsPadding()
                 .fillMaxWidth()
                 .padding(dimens.small1)
-                .navigationBarsPaddingIfLandscape(),
+                .safeDrawingEndPaddingIfLandscape(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {

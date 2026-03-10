@@ -67,11 +67,11 @@ fun Day(
             DayPosition.InDate, DayPosition.OutDate -> Color.Unspecified
         }
     }
-    Column(
+    Box(
         modifier = modifier
             .liquefiable(liquidState)
-            .fillMaxSize()
             .aspectRatio(1f)
+            .fillMaxSize()
             .clickable(
                 enabled = day.position == DayPosition.MonthDate,
                 indication = null,
@@ -79,44 +79,55 @@ fun Day(
                 onClick = {
                     onClick(day.date)
                 }
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            )
     ) {
 
-        Text(
-            modifier = Modifier,
-            text = when (day.position) {
-                DayPosition.MonthDate -> day.date.dayOfMonth.toString()
-                DayPosition.InDate, DayPosition.OutDate -> ""
-            },
-            color = when (day.date.dayOfWeek) {
-                DayOfWeek.SATURDAY, DayOfWeek.SUNDAY -> Color(0xFFFF9A9A)
-                else -> {
-                    if (isToday) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
+        if (isToday) {
+            Box(
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .size(4.dp)
+                    .align(Alignment.TopCenter)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onBackground, CircleShape)
+            )
+        }
+
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                modifier = Modifier,
+                text = when (day.position) {
+                    DayPosition.MonthDate -> day.date.dayOfMonth.toString()
+                    DayPosition.InDate, DayPosition.OutDate -> ""
+                },
+                color = when (day.date.dayOfWeek) {
+                    DayOfWeek.SATURDAY, DayOfWeek.SUNDAY -> Color(0xFFFF9A9A)
+                    else -> {
                         textColor
                     }
-                }
-            },
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center,
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dimens.extraSmall2)
-                .padding(horizontal = dimens.extraSmall2)
-        ) {
-            androidx.compose.animation.AnimatedVisibility(
-                visible = (groupedTasks?.tasksCount ?: 0) > 0
+                },
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center,
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(dimens.extraSmall2)
+                    .padding(horizontal = dimens.extraSmall2)
             ) {
-                groupedTasks?.takeIf { it.tasksCount > 0 }?.let {
-                    TasksLineIndicator(
-                        modifier = Modifier,
-                        task = groupedTasks
-                    )
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = (groupedTasks?.tasksCount ?: 0) > 0
+                ) {
+                    groupedTasks?.takeIf { it.tasksCount > 0 }?.let {
+                        TasksLineIndicator(
+                            modifier = Modifier,
+                            task = groupedTasks
+                        )
+                    }
                 }
             }
         }

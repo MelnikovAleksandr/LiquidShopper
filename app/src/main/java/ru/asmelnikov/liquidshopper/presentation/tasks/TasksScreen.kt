@@ -321,7 +321,7 @@ fun SharedTransitionScope.TasksScreenContent(
                                     }
                                 }
                                 Day(
-                                    modifier = Modifier,
+                                    modifier = Modifier.align(Alignment.Center),
                                     day = day,
                                     groupedTasks = currentDayTasks,
                                     onClick = onSelectedDayChange,
@@ -421,7 +421,7 @@ fun SharedTransitionScope.TasksScreenContent(
                                         }
                                     }
                                     Day(
-                                        modifier = Modifier,
+                                        modifier = Modifier.align(Alignment.Center),
                                         day = day,
                                         groupedTasks = currentDayTasks,
                                         onClick = onSelectedDayChange,

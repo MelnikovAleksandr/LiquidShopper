@@ -15,7 +15,6 @@ data class ItemsState(
     val taskId: Int,
     val task: Task? = null,
     val isNewItemModalShow: Boolean = false,
-    val newItemName: String = "",
     val newItemCount: Int = 1,
     val newItemUnit: UnitType = UnitType.PIECES,
     val newItemPrice: Int = 0,

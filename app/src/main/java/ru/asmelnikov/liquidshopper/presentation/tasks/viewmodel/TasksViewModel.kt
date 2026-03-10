@@ -1,6 +1,9 @@
 package ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -32,6 +35,12 @@ class TasksViewModel(
         subscribeTasks()
     }
 
+    var title by mutableStateOf("")
+        private set
+
+    var editTitle by mutableStateOf("")
+        private set
+
     fun deleteTask(task: Task) = intent {
         tasksRepository.deleteTask(task)
     }
@@ -40,20 +49,25 @@ class TasksViewModel(
         reduce { state.copy(isNewCreateModalShow = true) }
     }
 
-    fun onModalDismiss() = intent {
-        reduce {
-            state.copy(
-                isNewCreateModalShow = false,
-                title = "",
-                taskType = TaskTypes.OTHER,
-                emptyTitleError = false,
-                selectedTime = LocalTime.now()
-            )
+    fun onModalDismiss() {
+        title = ""
+        intent {
+            reduce {
+                state.copy(
+                    isNewCreateModalShow = false,
+                    taskType = TaskTypes.OTHER,
+                    emptyTitleError = false,
+                    selectedTime = LocalTime.now()
+                )
+            }
         }
     }
 
-    fun onTitleChange(text: String) = intent {
-        reduce { state.copy(title = text, emptyTitleError = false) }
+    fun onTitleChange(text: String) {
+        title = text
+        intent {
+            reduce { state.copy(emptyTitleError = false) }
+        }
     }
 
     fun onTaskTypeChange(taskType: TaskTypes) = intent {
@@ -61,13 +75,13 @@ class TasksViewModel(
     }
 
     fun onConfirmCreateClick() = intent {
-        if (state.title.isBlank()) {
+        if (title.isBlank()) {
             reduce { state.copy(emptyTitleError = true) }
             return@intent
         }
         tasksRepository.insertTask(
             task = createNewTask(
-                title = state.title,
+                title = title,
                 type = state.taskType,
                 timeStamp = state.selectedDay.atTime(state.selectedTime)
             )
@@ -91,38 +105,44 @@ class TasksViewModel(
         reduce { state.copy(isShowSelectMonthDialog = false) }
     }
 
-    fun onEditClick(task: Task) = intent {
-        reduce {
-            state.copy(
-                isEditModalShow = true,
-                editTaskId = task.uid,
-                editTitle = task.taskName,
-                editType = task.taskType,
-                editDateTime = task.timeStamp,
-                emptyEditTitleError = false
-            )
+    fun onEditClick(task: Task) {
+        editTitle = task.taskName
+        intent {
+            reduce {
+                state.copy(
+                    isEditModalShow = true,
+                    editTaskId = task.uid,
+                    editType = task.taskType,
+                    editDateTime = task.timeStamp,
+                    emptyEditTitleError = false
+                )
+            }
         }
     }
 
-    fun onEditDismiss() = intent {
-        reduce {
-            state.copy(
-                isEditModalShow = false,
-                editTaskId = null,
-                editTitle = "",
-                editType = TaskTypes.OTHER,
-                editDateTime = LocalDateTime.now(),
-                emptyEditTitleError = false
-            )
+    fun onEditDismiss() {
+        editTitle = ""
+        intent {
+            reduce {
+                state.copy(
+                    isEditModalShow = false,
+                    editTaskId = null,
+                    editType = TaskTypes.OTHER,
+                    editDateTime = LocalDateTime.now(),
+                    emptyEditTitleError = false
+                )
+            }
         }
     }
 
-    fun onEditTitle(title: String) = intent {
-        reduce {
-            state.copy(
-                editTitle = title,
-                emptyEditTitleError = false
-            )
+    fun onEditTitle(title: String) {
+        editTitle = title
+        intent {
+            reduce {
+                state.copy(
+                    emptyEditTitleError = false
+                )
+            }
         }
     }
 
@@ -143,14 +163,14 @@ class TasksViewModel(
     }
 
     fun onConfirmEditClick() = intent {
-        if (state.editTitle.isBlank()) {
+        if (editTitle.isBlank()) {
             reduce { state.copy(emptyEditTitleError = true) }
             return@intent
         }
         tasksRepository.updateTask(
             task = createUpdateTask(
                 uid = state.editTaskId,
-                title = state.editTitle,
+                title = editTitle,
                 type = state.editType,
                 timeStamp = state.editDateTime
             )
@@ -200,7 +220,12 @@ class TasksViewModel(
         )
     }
 
-    private fun createUpdateTask(uid: Int?, title: String, type: TaskTypes, timeStamp: LocalDateTime): Task {
+    private fun createUpdateTask(
+        uid: Int?,
+        title: String,
+        type: TaskTypes,
+        timeStamp: LocalDateTime
+    ): Task {
         return Task(
             uid = uid ?: UUID.randomUUID().hashCode(),
             taskName = title,

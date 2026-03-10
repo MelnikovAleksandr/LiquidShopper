@@ -48,6 +48,7 @@ import java.time.LocalTime
 fun NewTaskModal(
     modifier: Modifier = Modifier,
     state: TasksState,
+    title: String,
     liquidState: LiquidState,
     liquidParams: LiquidParams = LiquidParams(),
     onDismissRequest: () -> Unit,
@@ -124,7 +125,7 @@ fun NewTaskModal(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = dimens.small1),
-                        title = state.title,
+                        title = title,
                         onTitleChange = onTitleChange,
                         isEmptyError = state.emptyTitleError,
                         emptyPlaceholder = stringResource(R.string.task_placeholder),

@@ -92,6 +92,7 @@ fun SharedTransitionScope.ItemsScreen(
 
     ItemsScreenContent(
         state = state,
+        newItemName = viewModel.newItemName,
         onBackClick = viewModel::navigateBack,
         onNewCreateModalShow = viewModel::onNewItemCreateClick,
         animatedVisibilityScope = animatedVisibilityScope,
@@ -113,6 +114,7 @@ fun SharedTransitionScope.ItemsScreen(
 @Composable
 fun SharedTransitionScope.ItemsScreenContent(
     state: ItemsState,
+    newItemName: String,
     onBackClick: () -> Unit,
     onNewCreateModalShow: () -> Unit,
     onDismissNewCreateRequest: () -> Unit,
@@ -135,6 +137,7 @@ fun SharedTransitionScope.ItemsScreenContent(
 
     CreateItemModal(
         state = state,
+        newItemName = newItemName,
         liquidState = liquidState,
         onDismissRequest = onDismissNewCreateRequest,
         onNewItemNameChange = onNewItemNameChange,
@@ -238,6 +241,7 @@ private fun ItemsPreview1() {
                         taskId = 123,
                         task = taskWithItemsMock
                     ),
+                    newItemName = "",
                     onBackClick = {},
                     onNewCreateModalShow = {},
                     onDismissNewCreateRequest = {},
@@ -276,6 +280,7 @@ private fun ItemsPreview2() {
                         taskId = 123,
                         task = taskWithItemsMock
                     ),
+                    newItemName = "",
                     onBackClick = {},
                     onNewCreateModalShow = {},
                     onDismissNewCreateRequest = {},

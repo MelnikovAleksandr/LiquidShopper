@@ -116,6 +116,8 @@ fun SharedTransitionScope.TasksScreen(
 
     TasksScreenContent(
         state = state,
+        title = viewModel.title,
+        editTitle = viewModel.editTitle,
         onDeleteTask = viewModel::deleteTask,
         onDismissModal = viewModel::onModalDismiss,
         onCreateClick = viewModel::onCreateClick,
@@ -147,6 +149,8 @@ fun SharedTransitionScope.TasksScreen(
 @Composable
 fun SharedTransitionScope.TasksScreenContent(
     state: TasksState,
+    title: String,
+    editTitle: String,
     onDeleteTask: (Task) -> Unit,
     onDismissModal: () -> Unit,
     onCreateClick: () -> Unit,
@@ -216,6 +220,7 @@ fun SharedTransitionScope.TasksScreenContent(
 
     NewTaskModal(
         state = state,
+        title = title,
         liquidState = liquidState,
         onTypeChange = onTypeChange,
         onDismissRequest = onDismissModal,
@@ -226,6 +231,7 @@ fun SharedTransitionScope.TasksScreenContent(
 
     EditTaskModal(
         state = state,
+        editTitle = editTitle,
         liquidState = liquidState,
         onDismissRequest = onDismissEditRequest,
         onTitleChange = onEditTitleChange,
@@ -485,6 +491,8 @@ private fun CalendarPreview1() {
             AnimatedVisibility(visible = true) {
                 TasksScreenContent(
                     state = TasksState(),
+                    title = "",
+                    editTitle = "",
                     onDeleteTask = {},
                     onDismissModal = {},
                     onCreateClick = {},
@@ -527,6 +535,8 @@ private fun CalendarPreview2() {
             AnimatedVisibility(visible = true) {
                 TasksScreenContent(
                     state = TasksState(),
+                    title = "",
+                    editTitle = "",
                     onDeleteTask = {},
                     onDismissModal = {},
                     onCreateClick = {},

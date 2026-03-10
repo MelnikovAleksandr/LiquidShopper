@@ -48,6 +48,7 @@ import java.time.LocalDateTime
 fun EditTaskModal(
     modifier: Modifier = Modifier,
     state: TasksState,
+    editTitle: String,
     liquidState: LiquidState,
     liquidParams: LiquidParams = LiquidParams(),
     onDismissRequest: () -> Unit,
@@ -123,7 +124,7 @@ fun EditTaskModal(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = dimens.small1),
-                        title = state.editTitle,
+                        title = editTitle,
                         onTitleChange = onTitleChange,
                         isEmptyError = state.emptyEditTitleError,
                         emptyPlaceholder = stringResource(R.string.task_edit_placeholder),

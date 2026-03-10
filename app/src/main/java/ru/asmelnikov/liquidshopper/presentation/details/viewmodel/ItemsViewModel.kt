@@ -1,5 +1,8 @@
 package ru.asmelnikov.liquidshopper.presentation.details.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -31,6 +34,9 @@ class ItemsViewModel(
         subscribeTask()
     }
 
+    var newItemName by mutableStateOf("")
+        private set
+
     fun navigateBack() = intent {
         postSideEffect(ItemsSideEffects.NavigateBack)
     }
@@ -39,21 +45,26 @@ class ItemsViewModel(
         reduce { state.copy(isNewItemModalShow = true, emptyNewItemNameError = false) }
     }
 
-    fun onNewItemDismiss() = intent {
-        reduce {
-            state.copy(
-                isNewItemModalShow = false,
-                emptyNewItemNameError = false,
-                newItemName = "",
-                newItemCount = 1,
-                newItemUnit = UnitType.PIECES,
-                newItemPrice = 0
-            )
+    fun onNewItemDismiss() {
+        newItemName = ""
+        intent {
+            reduce {
+                state.copy(
+                    isNewItemModalShow = false,
+                    emptyNewItemNameError = false,
+                    newItemCount = 1,
+                    newItemUnit = UnitType.PIECES,
+                    newItemPrice = 0
+                )
+            }
         }
     }
 
-    fun onNewItemNameChange(title: String) = intent {
-        reduce { state.copy(newItemName = title, emptyNewItemNameError = false) }
+    fun onNewItemNameChange(title: String) {
+        newItemName = title
+        intent {
+            reduce { state.copy(emptyNewItemNameError = false) }
+        }
     }
 
     fun onNewItemCountChange(count: Int) = intent {
@@ -69,12 +80,12 @@ class ItemsViewModel(
     }
 
     fun onNewCreateConfirm() = intent {
-        if (state.newItemName.isBlank()) {
+        if (newItemName.isBlank()) {
             reduce { state.copy(emptyNewItemNameError = true) }
             return@intent
         }
         itemsRepository.insertItem(
-            createNewItem(state)
+            createNewItem(state, newItemName)
         )
         onNewItemDismiss()
     }
@@ -146,12 +157,12 @@ class ItemsViewModel(
         }
     }
 
-    private fun createNewItem(state: ItemsState): Item {
+    private fun createNewItem(state: ItemsState, newItemName: String): Item {
         return Item(
             uid = UUID.randomUUID().hashCode(),
             timeStamp = state.task?.timeStamp ?: LocalDateTime.now(),
             taskId = state.taskId,
-            itemName = state.newItemName,
+            itemName = newItemName,
             count = state.newItemCount,
             price = state.newItemPrice,
             units = state.newItemUnit,

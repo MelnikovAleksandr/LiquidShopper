@@ -15,7 +15,6 @@ import ru.asmelnikov.liquidshopper.domain.models.BackgroundImage
 @Parcelize
 data class TasksState(
     val tasks: List<GroupedTasksByDay> = emptyList(),
-    val title: String = "",
     val isNewCreateModalShow: Boolean = false,
     val emptyTitleError: Boolean = false,
     val taskType: TaskTypes = TaskTypes.OTHER,
@@ -24,7 +23,6 @@ data class TasksState(
     val isShowSelectMonthDialog: Boolean = false,
     val isEditModalShow: Boolean = false,
     val editTaskId: Int? = null,
-    val editTitle: String = "",
     val editType: TaskTypes = TaskTypes.OTHER,
     val editDateTime: LocalDateTime = LocalDateTime.now(),
     val emptyEditTitleError: Boolean = false,

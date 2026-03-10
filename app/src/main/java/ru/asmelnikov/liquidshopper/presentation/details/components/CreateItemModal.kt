@@ -48,6 +48,7 @@ import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonRow
 fun CreateItemModal(
     modifier: Modifier = Modifier,
     state: ItemsState,
+    newItemName: String,
     liquidState: LiquidState,
     liquidParams: LiquidParams = LiquidParams(),
     onDismissRequest: () -> Unit,
@@ -126,7 +127,7 @@ fun CreateItemModal(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = dimens.small1),
-                        title = state.newItemName,
+                        title = newItemName,
                         maxInputLength = 75,
                         onTitleChange = onNewItemNameChange,
                         isEmptyError = state.emptyNewItemNameError,

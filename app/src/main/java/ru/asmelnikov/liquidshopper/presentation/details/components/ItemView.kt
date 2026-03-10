@@ -186,7 +186,6 @@ fun ItemView(
 
                 ScaleButtonColumn(
                     modifier = Modifier
-                        .navigationBarsPaddingIfLandscape()
                         .padding(end = dimens.small3)
                         .size(dimens.medium4),
                     liquidState = liquidState,

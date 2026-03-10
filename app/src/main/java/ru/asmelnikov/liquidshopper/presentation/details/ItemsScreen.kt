@@ -54,6 +54,7 @@ import ru.asmelnikov.liquidshopper.presentation.navigation.popUp
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
 
 @Composable
 fun SharedTransitionScope.ItemsScreen(
@@ -188,6 +189,7 @@ fun SharedTransitionScope.ItemsScreenContent(
             items(items = state.task?.items ?: emptyList(), key = { it.uid }) { item ->
                 ItemView(
                     modifier = Modifier
+                        .navigationBarsPaddingIfLandscape()
                         .animateItem()
                         .hazeSource(state = hazeState),
                     item = item,

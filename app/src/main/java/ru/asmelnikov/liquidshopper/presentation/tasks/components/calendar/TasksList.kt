@@ -43,6 +43,7 @@ import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.taskcard.TaskCard
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksState
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
+import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
 import ru.asmelnikov.liquidshopper.utils.datetime.toDayMonthString
 
 @Composable
@@ -119,6 +120,7 @@ fun SharedTransitionScope.TasksList(
             items(items = selectedDayTasks?.tasks ?: emptyList(), key = { it.uid }) { task ->
                 TaskCard(
                     modifier = Modifier
+                        .navigationBarsPaddingIfLandscape()
                         .animateItem(
                             fadeInSpec = null,
                             fadeOutSpec = null,

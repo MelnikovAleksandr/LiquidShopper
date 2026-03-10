@@ -58,7 +58,7 @@ import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
 import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonRow
-import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
+import ru.asmelnikov.liquidshopper.utils.components.safeDrawingEndPaddingIfLandscape
 import java.util.UUID
 
 @Composable
@@ -103,7 +103,7 @@ fun SharedTransitionScope.Header(
                 .statusBarsPadding()
                 .fillMaxWidth()
                 .padding(dimens.small1)
-                .navigationBarsPaddingIfLandscape(),
+                .safeDrawingEndPaddingIfLandscape(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -190,7 +190,7 @@ fun SharedTransitionScope.Header(
                 .fillMaxWidth()
                 .padding(horizontal = dimens.small3)
                 .padding(bottom = dimens.extraSmall2)
-                .navigationBarsPaddingIfLandscape(),
+                .safeDrawingEndPaddingIfLandscape(),
             verticalAlignment = Alignment.CenterVertically
         ) {
 

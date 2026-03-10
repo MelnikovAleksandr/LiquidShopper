@@ -94,7 +94,7 @@ fun SharedTransitionScope.TaskCard(
             )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().navigationBarsPaddingIfLandscape(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -107,7 +107,6 @@ fun SharedTransitionScope.TaskCard(
         }
 
         Row(
-            modifier = Modifier.navigationBarsPaddingIfLandscape(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {

@@ -66,7 +66,7 @@ fun ItemView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             ScaleButtonBox(
-                modifier = Modifier.size(dimens.medium4),
+                modifier = Modifier.padding(start = dimens.small1).size(dimens.medium4),
                 liquidState = liquidState,
                 enabled = false,
                 onClick = {}

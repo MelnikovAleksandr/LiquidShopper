@@ -22,8 +22,9 @@ val dataModule = module {
             context = get(),
             klass = ShopperDatabase::class.java,
             name = DB_NAME
-        ).fallbackToDestructiveMigration(true)
-            .createFromAsset(DB_ASSETS).build()
+        )
+            .createFromAsset(DB_ASSETS)
+            .build()
     }
 
     single<TasksRepository> {

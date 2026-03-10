@@ -23,12 +23,7 @@ enum class BackgroundImage(
     BACKGROUND_PATTERN_5(R.drawable.background_pattern_5, 5),
     BACKGROUND_PATTERN_6(R.drawable.background_pattern_6, 6),
     BACKGROUND_PATTERN_7(R.drawable.background_pattern_7, 7),
-    BACKGROUND_PATTERN_8(R.drawable.background_pattern_8, 8),
-    BACKGROUND_PATTERN_9(R.drawable.background_pattern_9, 9),
-    BACKGROUND_PATTERN_10(R.drawable.background_pattern_10, 10),
-    BACKGROUND_PATTERN_11(R.drawable.background_pattern_11, 11),
-    BACKGROUND_PATTERN_12(R.drawable.background_pattern_12, 12),
-    BACKGROUND_PATTERN_13(R.drawable.background_pattern_13, 13);
+    BACKGROUND_PATTERN_8(R.drawable.background_pattern_8, 8);
 
     companion object {
         fun fromValue(value: Int): BackgroundImage =

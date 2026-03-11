@@ -105,7 +105,7 @@ fun List<TaskWithItems>.toStatistics(): Statistic {
 
         dataMapSet[type] = dataMapSet.getOrDefault(type, 0) + 1
 
-        val sum = taskWithItems.items.sumOf { it.price * it.count }
+        val sum = taskWithItems.items.sumOf { it.price }
         legendMapSet[type] = legendMapSet.getOrDefault(type, 0) + sum
     }
 

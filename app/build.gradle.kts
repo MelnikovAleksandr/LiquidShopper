@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Properties
 
 plugins {
@@ -48,6 +50,22 @@ android {
             )
         }
     }
+
+    applicationVariants.all {
+        val variant = this
+        outputs.all {
+            val outputImpl = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val baseName = "LiquidShopper"
+            val buildType = variant.buildType.name
+            val fileName = "${baseName}-${buildType}-" +
+                    "v${defaultConfig.versionName}-" +
+                    "vc${defaultConfig.versionCode}-" +
+                    "${getDateTimeFormat()}.apk"
+
+            outputImpl.outputFileName = fileName
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -127,4 +145,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+fun getDateTimeFormat(): String {
+    val simpleDateFormat = SimpleDateFormat("ddMMyy")
+    return simpleDateFormat.format(Date())
 }

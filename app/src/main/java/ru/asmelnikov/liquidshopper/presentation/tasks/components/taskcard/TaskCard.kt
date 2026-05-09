@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,45 +41,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.fletchmckee.liquid.LiquidState
-import io.github.fletchmckee.liquid.rememberLiquidState
+import com.kyant.backdrop.backdrops.LayerBackdrop
+import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import ru.asmelnikov.liquidshopper.domain.models.Task
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
 import ru.asmelnikov.liquidshopper.domain.models.taskItemsMock
 import ru.asmelnikov.liquidshopper.domain.models.taskMock
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonColumn
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
-import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonColumn
 import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
-import ru.asmelnikov.liquidshopper.utils.components.scaleindication.ScaleIndication
 import ru.asmelnikov.liquidshopper.utils.datetime.toFormattedString
 
 @Composable
 fun SharedTransitionScope.TaskCard(
     modifier: Modifier = Modifier,
-    liquidState: LiquidState,
+    liquidState: LayerBackdrop,
+    listLiquidState: LayerBackdrop,
     task: Task,
     onShareTask: (Task) -> Unit,
     onEditTask: (Task) -> Unit,
     onDeleteTask: (Task) -> Unit,
     onDetails: (Int) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    interactionSource: MutableInteractionSource? = null
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = modifier
-            .clickable(
-                onClick = {
-                    onDetails(task.uid)
-                },
-                indication = ScaleIndication,
-                interactionSource = interactionSource,
-                enabled = true
-            )
+
             .fillMaxWidth()
             .padding(horizontal = dimens.small1)
             .clip(RoundedCornerShape(dimens.small1))
@@ -91,6 +82,11 @@ fun SharedTransitionScope.TaskCard(
                         task.taskType.color.copy(alpha = 0.4f)
                     )
                 )
+            )
+            .clickable(
+                onClick = {
+                    onDetails(task.uid)
+                }
             )
     ) {
         Row(
@@ -154,51 +150,52 @@ fun SharedTransitionScope.TaskCard(
             Spacer(modifier = Modifier.width(dimens.extraSmall1))
             CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
 
-                ScaleButtonBox(
-                    modifier = Modifier.size(dimens.medium4),
-                    liquidState = liquidState,
+                LiquidButtonBox(
                     onClick = {
                         onShareTask(task)
+                    },
+                    backdrop = liquidState,
+                    modifier = Modifier.size(dimens.medium4),
+                    content = {
+                        Icon(
+                            modifier = Modifier.size(dimens.medium3),
+                            imageVector = Icons.Filled.Share,
+                            contentDescription = "share",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
                     }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(dimens.medium3),
-                        imageVector = Icons.Filled.Share,
-                        contentDescription = "share",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
+                )
                 Spacer(modifier = Modifier.width(dimens.extraSmall1))
-                ScaleButtonColumn(
-                    modifier = Modifier.navigationBarsPaddingIfLandscape().size(dimens.medium4),
-                    liquidState = liquidState,
+                LiquidButtonColumn(
                     onClick = {
                         expanded = true
-                    }
-                ) {
-                    DropDown(
-                        modifier = Modifier,
-                        liquidState = liquidState,
-                        liquidParams = LiquidParams().copy(dispersion = 1f),
-                        expanded = expanded,
-                        onDismiss = {
-                            expanded = false
-                        },
-                        onEditClick = {
-                            onEditTask(task)
-                        },
-                        onDeleteClick = {
-                            onDeleteTask(task)
-                        }
-                    )
+                    },
+                    backdrop = liquidState,
+                    modifier = Modifier.navigationBarsPaddingIfLandscape().size(dimens.medium4),
+                    content = {
+                        DropDown(
+                            modifier = Modifier,
+                            liquidState = rememberCombinedBackdrop(listLiquidState, liquidState),
+                            expanded = expanded,
+                            onDismiss = {
+                                expanded = false
+                            },
+                            onEditClick = {
+                                onEditTask(task)
+                            },
+                            onDeleteClick = {
+                                onDeleteTask(task)
+                            }
+                        )
 
-                    Icon(
-                        modifier = Modifier.size(dimens.medium3),
-                        imageVector = Icons.Filled.Menu,
-                        contentDescription = "menu",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
+                        Icon(
+                            modifier = Modifier.size(dimens.medium3),
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "menu",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                )
                 Spacer(modifier = Modifier.width(dimens.extraSmall1))
             }
         }
@@ -219,7 +216,8 @@ private fun TaskCardPreview() {
                     Spacer(modifier = Modifier.height(8.dp))
                     TaskCard(
                         task = taskMock.copy(items = taskItemsMock),
-                        liquidState = rememberLiquidState(),
+                        liquidState = rememberLayerBackdrop(),
+                        listLiquidState = rememberLayerBackdrop(),
                         animatedVisibilityScope = this@AnimatedVisibility,
                         onShareTask = {},
                         onEditTask = {},
@@ -233,7 +231,8 @@ private fun TaskCardPreview() {
                             taskType = TaskTypes.ALCOHOL,
                             taskName = "Test name of Task"
                         ),
-                        liquidState = rememberLiquidState(),
+                        liquidState = rememberLayerBackdrop(),
+                        listLiquidState = rememberLayerBackdrop(),
                         animatedVisibilityScope = this@AnimatedVisibility,
                         onShareTask = {},
                         onEditTask = {},

@@ -19,10 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import io.github.fletchmckee.liquid.liquefiable
-import io.github.fletchmckee.liquid.rememberLiquidState
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 import ru.asmelnikov.liquidshopper.domain.models.Background
@@ -62,14 +62,14 @@ fun SettingsScreenContent(
     onBackChange: (Background) -> Unit,
     onBackClick: () -> Unit
 ) {
-    val liquidState = rememberLiquidState()
+    val liquidState = rememberLayerBackdrop()
     val hazeState = rememberHazeState()
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(state.background.drawableRes),
             contentDescription = null,
             modifier = Modifier
-                .liquefiable(liquidState)
+                .layerBackdrop(liquidState)
                 .hazeSource(state = hazeState)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),

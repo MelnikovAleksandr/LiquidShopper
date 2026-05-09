@@ -22,11 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import io.github.fletchmckee.liquid.LiquidState
-import io.github.fletchmckee.liquid.rememberLiquidState
+import com.kyant.backdrop.backdrops.LayerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
 import ru.asmelnikov.liquidshopper.utils.datetime.toDisplay
 import java.time.YearMonth
 
@@ -34,7 +34,7 @@ import java.time.YearMonth
 fun MonthsCalendarTitle(
     modifier: Modifier = Modifier,
     currentMonth: YearMonth,
-    liquidState: LiquidState,
+    liquidState: LayerBackdrop,
     goToPrevious: () -> Unit,
     goToNext: () -> Unit,
     onMonthDialogShow: () -> Unit
@@ -51,47 +51,49 @@ fun MonthsCalendarTitle(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            ScaleButtonBox(
+            LiquidButtonBox(
+                onClick = goToPrevious,
+                backdrop = liquidState,
                 modifier = Modifier.size(dimens.medium4),
-                liquidState = liquidState,
-                onClick = goToPrevious
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimens.medium3),
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "prev",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+                content = {
+                    Icon(
+                        modifier = Modifier.size(dimens.medium3),
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = "prev",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            )
             Spacer(modifier = Modifier.width(dimens.small3))
-            ScaleButtonBox(
+            LiquidButtonBox(
+                onClick = onMonthDialogShow,
+                backdrop = liquidState,
                 modifier = Modifier.height(dimens.medium4)
                     .weight(1f),
-                liquidState = liquidState,
-                onClick = onMonthDialogShow
-            ) {
-                Text(
-                    modifier = Modifier,
-                    text = currentMonth.toDisplay(),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
+                content = {
+                    Text(
+                        modifier = Modifier,
+                        text = currentMonth.toDisplay(),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            )
             Spacer(modifier = Modifier.width(dimens.small3))
-            ScaleButtonBox(
+            LiquidButtonBox(
+                onClick = goToNext,
+                backdrop = liquidState,
                 modifier = Modifier.size(dimens.medium4),
-                liquidState = liquidState,
-                onClick = goToNext
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimens.medium3),
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "next",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+                content = {
+                    Icon(
+                        modifier = Modifier.size(dimens.medium3),
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = "next",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            )
         }
     }
 }
@@ -107,7 +109,7 @@ private fun MonthsCalendarTitlePreview() {
         ) {
             MonthsCalendarTitle(
                 currentMonth = YearMonth.now(),
-                liquidState = rememberLiquidState(),
+                liquidState = rememberLayerBackdrop(),
                 goToPrevious = {},
                 goToNext = {},
                 onMonthDialogShow = {}

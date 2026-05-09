@@ -31,20 +31,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.fletchmckee.liquid.LiquidState
-import io.github.fletchmckee.liquid.liquefiable
-import io.github.fletchmckee.liquid.rememberLiquidState
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Item
 import ru.asmelnikov.liquidshopper.domain.models.taskItemsMock
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
 
 @Composable
 fun ItemView(
     modifier: Modifier = Modifier,
-    liquidState: LiquidState,
+    liquidState: Backdrop,
     item: Item
 ) {
     Box(
@@ -65,33 +65,34 @@ fun ItemView(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ScaleButtonBox(
-                modifier = Modifier.padding(start = dimens.small1).size(dimens.medium4),
-                liquidState = liquidState,
-                enabled = false,
-                onClick = {}
-            ) {
 
-                Box(
-                    modifier = Modifier
-                        .size(dimens.medium3)
-                        .clip(CircleShape)
-                        .background(
-                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
-                            CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
+            LiquidButtonBox(
+                modifier = Modifier
+                    .padding(start = dimens.small1)
+                    .size(dimens.medium4),
+                onClick = {},
+                backdrop = liquidState,
+                content = {
+                    Box(
                         modifier = Modifier
-                            .size(dimens.medium2),
-                        imageVector = if (item.bought) Icons.Sharp.Check else Icons.Sharp.Clear,
-                        contentDescription = "",
-                        tint = if (item.bought) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                    )
+                            .size(dimens.medium3)
+                            .clip(CircleShape)
+                            .background(
+                                MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(dimens.medium2),
+                            imageVector = if (item.bought) Icons.Sharp.Check else Icons.Sharp.Clear,
+                            contentDescription = "",
+                            tint = if (item.bought) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
-            }
-
+            )
             Column(
                 modifier = Modifier
                     .padding(dimens.small1)
@@ -138,7 +139,7 @@ fun ItemView(
 @Composable
 private fun ItemViewPreview() {
     LiquidShopperTheme(darkTheme = true) {
-        val liquidState = rememberLiquidState()
+        val liquidState = rememberLayerBackdrop()
         Box(
             modifier = Modifier
                 .size(400.dp)
@@ -150,7 +151,7 @@ private fun ItemViewPreview() {
                 painter = painterResource(R.drawable.background_pattern_1),
                 contentDescription = null,
                 modifier = Modifier
-                    .liquefiable(liquidState)
+                    .layerBackdrop(liquidState)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
                 contentScale = ContentScale.Crop

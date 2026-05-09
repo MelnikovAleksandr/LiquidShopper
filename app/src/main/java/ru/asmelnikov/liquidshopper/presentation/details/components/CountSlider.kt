@@ -16,13 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.SliderDefaults.colors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,22 +29,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.fletchmckee.liquid.LiquidState
-import io.github.fletchmckee.liquid.liquefiable
-import io.github.fletchmckee.liquid.liquid
-import io.github.fletchmckee.liquid.rememberLiquidState
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.emptyBackdrop
 import kotlinx.coroutines.delay
 import ru.asmelnikov.liquidshopper.R
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidSlider
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
-import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
 
 private const val MIN_COUNT = 1
 private const val MAX_COUNT = 1000
@@ -57,13 +50,12 @@ private const val MAX_COUNT = 1000
 @Composable
 fun CountSlider(
     modifier: Modifier = Modifier,
-    liquidState: LiquidState,
-    liquidParams: LiquidParams = LiquidParams(),
+    liquidState: Backdrop,
     count: Int,
     onCountChange: (Int) -> Unit
 ) {
+    var innerCounter by remember { mutableIntStateOf(count) }
 
-    val nestedLiquidState = rememberLiquidState()
     var isMunisPress by remember {
         mutableStateOf(false)
     }
@@ -74,6 +66,7 @@ fun CountSlider(
     LaunchedEffect(isMunisPress, count) {
         while (isMunisPress) {
             if (count > MIN_COUNT) {
+                innerCounter -= 1
                 onCountChange(count - 1)
             } else {
                 break
@@ -85,6 +78,7 @@ fun CountSlider(
     LaunchedEffect(isPlusPress, count) {
         while (isPlusPress) {
             if (count < MAX_COUNT) {
+                innerCounter += 1
                 onCountChange(count + 1)
             } else {
                 break
@@ -102,7 +96,8 @@ fun CountSlider(
     )
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
@@ -113,98 +108,86 @@ fun CountSlider(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ScaleButtonBox(
+
+            LiquidButtonBox(
                 modifier = Modifier.size(dimens.regular),
-                liquidState = liquidState,
                 isPressed = { isPressed ->
                     isMunisPress = isPressed
                 },
                 onClick = {
                     if (count > MIN_COUNT) {
+                        innerCounter -= 1
                         onCountChange(count - 1)
                     }
+                },
+                backdrop = liquidState,
+                content = {
+                    Icon(
+                        modifier = Modifier.size(dimens.medium4),
+                        painter = painterResource(R.drawable.minus),
+                        contentDescription = "minus",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
                 }
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimens.medium4),
-                    painter = painterResource(R.drawable.minus),
-                    contentDescription = "minus",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            )
             Spacer(modifier = Modifier.width(dimens.small3))
-            ScaleButtonBox(
+            LiquidButtonBox(
                 modifier = Modifier
                     .height(dimens.regular)
                     .weight(1f),
-                liquidState = liquidState,
-                enabled = false,
-                onClick = {}
-            ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = dimens.small3),
-                    text = counter.toString(),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 3
-                )
-            }
-
+                onClick = {},
+                backdrop = liquidState,
+                content = {
+                    Text(
+                        modifier = Modifier.padding(horizontal = dimens.small3),
+                        text = counter.toString(),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 3
+                    )
+                }
+            )
             Spacer(modifier = Modifier.width(dimens.small3))
-            ScaleButtonBox(
+            LiquidButtonBox(
                 modifier = Modifier.size(dimens.regular),
-                liquidState = liquidState,
                 isPressed = { isPressed ->
                     isPlusPress = isPressed
                 },
                 onClick = {
                     if (count < MAX_COUNT) {
+                        innerCounter += 1
                         onCountChange(count + 1)
                     }
+                },
+                backdrop = liquidState,
+                content = {
+                    Icon(
+                        modifier = Modifier
+                            .size(dimens.medium4),
+                        painter = painterResource(R.drawable.plus),
+                        contentDescription = "plus",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
                 }
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(dimens.medium4),
-                    painter = painterResource(R.drawable.plus),
-                    contentDescription = "plus",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            )
         }
 
-        Slider(
-            modifier = Modifier.fillMaxWidth(),
-            value = counter.toFloat(),
+        LiquidSlider(
+            value = { innerCounter.toFloat() },
             valueRange = MIN_COUNT.toFloat()..MAX_COUNT.toFloat(),
+            backdrop = liquidState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
             onValueChange = { newIntValue ->
                 if (newIntValue.toInt() in MIN_COUNT..MAX_COUNT) {
+                    innerCounter = newIntValue.toInt()
                     onCountChange(newIntValue.toInt())
                 }
             },
-            steps = 0,
-            track = { sliderState ->
-                SliderDefaults.Track(
-                    modifier = Modifier.liquefiable(nestedLiquidState),
-                    sliderState = sliderState,
-                    thumbTrackGapSize = 0.dp,
-                    colors = colors(
-                        activeTrackColor = MaterialTheme.colorScheme.secondary,
-                        activeTickColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        inactiveTickColor = MaterialTheme.colorScheme.secondary
-                    )
-                )
-            },
-            thumb = {
-                Box(
-                    Modifier
-                        .size(dimens.medium4)
-                        .clip(CircleShape)
-                        .liquid(nestedLiquidState, liquidParams())
-                )
-            }
+            visibilityThreshold = 0f
         )
     }
 }
@@ -213,14 +196,18 @@ fun CountSlider(
 @Composable
 private fun CountSliderPreview() {
     LiquidShopperTheme(darkTheme = true) {
-        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
 
             var count by remember {
                 mutableIntStateOf(1)
             }
 
             CountSlider(
-                liquidState = rememberLiquidState(),
+                liquidState = emptyBackdrop(),
                 count = count,
                 onCountChange = {
                     count = it

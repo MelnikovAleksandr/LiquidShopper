@@ -35,7 +35,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import io.github.fletchmckee.liquid.LiquidState
+import androidx.compose.ui.unit.dp
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.effects.vibrancy
 import kotlinx.coroutines.launch
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Item
@@ -44,17 +50,15 @@ import ru.asmelnikov.liquidshopper.presentation.details.viewmodel.ItemsState
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.newtaskmodal.TextFieldCustom
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.EnumDropDown
-import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonRow
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditItemModal(
     modifier: Modifier = Modifier,
     state: ItemsState,
-    liquidState: LiquidState,
-    liquidParams: LiquidParams = LiquidParams(),
+    liquidState: Backdrop,
     onDismissRequest: () -> Unit,
     onEditConfirm: (Item) -> Unit
 ) {
@@ -62,6 +66,8 @@ fun EditItemModal(
     if (state.isEditModalShow) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         val scope = rememberCoroutineScope()
+        val bottomSheetBackdrop = rememberLayerBackdrop()
+        val sheetShape = MaterialTheme.shapes.extraLarge
         var editItem by rememberSaveable(state.editItem) {
             mutableStateOf(state.editItem)
         }
@@ -86,7 +92,17 @@ fun EditItemModal(
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .drawBackdrop(
+                        backdrop = liquidState,
+                        shape = { sheetShape },
+                        effects = {
+                            vibrancy()
+                            blur(4f.dp.toPx())
+                            lens(24f.dp.toPx(), 48f.dp.toPx(), true)
+                        },
+                        exportedBackdrop = bottomSheetBackdrop
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
@@ -95,27 +111,26 @@ fun EditItemModal(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
                 ) {
-
-                    ScaleButtonBox(
+                    LiquidButtonBox(
                         modifier = Modifier
                             .padding(dimens.small1)
                             .size(dimens.medium4),
-                        liquidState = liquidState,
-                        liquidParams = liquidParams,
                         onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
                                 if (!sheetState.isVisible) {
                                     onDismissRequest()
                                 }
                             }
+                        },
+                        backdrop = bottomSheetBackdrop,
+                        content = {
+                            Icon(
+                                modifier = Modifier.size(dimens.medium3),
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "close"
+                            )
                         }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(dimens.medium3),
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "close"
-                        )
-                    }
+                    )
                 }
 
                 Column(
@@ -146,8 +161,7 @@ fun EditItemModal(
 
                     CountSlider(
                         modifier = Modifier,
-                        liquidState = liquidState,
-                        liquidParams = liquidParams,
+                        liquidState = bottomSheetBackdrop,
                         count = editItem?.count ?: 1,
                         onCountChange = {
                             editItem = editItem?.copy(count = it)
@@ -194,35 +208,34 @@ fun EditItemModal(
                     }
 
                     Spacer(modifier = Modifier.height(dimens.small3))
-
-                    ScaleButtonRow(
+                    LiquidButtonRow(
                         modifier = Modifier
                             .padding(dimens.small1)
                             .navigationBarsPadding(),
-                        liquidState = liquidState,
-                        liquidParams = liquidParams,
                         onClick = {
                             editItem?.let { item ->
                                 onEditConfirm(item)
                             }
+                        },
+                        backdrop = bottomSheetBackdrop,
+                        content = {
+                            Icon(
+                                modifier = Modifier
+                                    .size(dimens.regular)
+                                    .padding(dimens.extraSmall2),
+                                imageVector = Icons.Filled.AddCircle,
+                                contentDescription = "add"
+                            )
+                            Text(
+                                modifier = Modifier.padding(end = dimens.small1),
+                                text = stringResource(R.string.item_update),
+                                style = MaterialTheme.typography.headlineSmall,
+                                maxLines = 1,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(dimens.regular)
-                                .padding(dimens.extraSmall2),
-                            imageVector = Icons.Filled.AddCircle,
-                            contentDescription = "add"
-                        )
-                        Text(
-                            modifier = Modifier.padding(end = dimens.small1),
-                            text = stringResource(R.string.item_update),
-                            style = MaterialTheme.typography.headlineSmall,
-                            maxLines = 1,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    )
                     Spacer(modifier = Modifier.height(dimens.small3))
                 }
             }

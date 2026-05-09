@@ -39,7 +39,7 @@
     <string name="stats_clear">Очистить</string>
     <string name="stats_dismiss">Отмена</string>
     <string name="stats_confirm">Выбрать</string>
-    <string name="stats_empty">В выбранный период нет статистики, пожалуйста поробуйте другой диапазон дат</string>
+    <string name="stats_empty">В выбранный период нет статистики, пожалуйста попробуйте другой диапазон дат</string>
 
     <!--    Categories-->
     <string name="category_pharmacy">Аптека</string>

@@ -27,8 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -46,24 +44,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.fletchmckee.liquid.LiquidState
-import io.github.fletchmckee.liquid.rememberLiquidState
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.emptyBackdrop
 import kotlinx.coroutines.launch
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Item
 import ru.asmelnikov.liquidshopper.domain.models.taskItemsMock
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonColumn
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidToggle
 import ru.asmelnikov.liquidshopper.presentation.tasks.components.taskcard.DropDown
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
-import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonColumn
 import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
 
 @Composable
 fun ItemView(
     modifier: Modifier = Modifier,
     item: Item,
-    liquidState: LiquidState,
+    liquidState: Backdrop,
     onItemBoughtChange: (Item) -> Unit,
     onEditItem: (Item) -> Unit,
     onDeleteItem: (Item) -> Unit
@@ -74,7 +72,7 @@ fun ItemView(
         initialValue = SwipeToDismissBoxValue.Settled,
         positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
     )
-
+    var isToggleDragging by remember { mutableStateOf(false) }
     SwipeToDismissBox(
         state = swipeState,
         modifier = modifier
@@ -105,8 +103,7 @@ fun ItemView(
                 item.bought
             )
         },
-        enableDismissFromStartToEnd = true,
-        enableDismissFromEndToStart = true
+        gesturesEnabled = !isToggleDragging
     ) {
         Box(
             modifier = Modifier
@@ -126,23 +123,15 @@ fun ItemView(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Switch(
+
+                LiquidToggle(
                     modifier = Modifier.padding(dimens.small3),
-                    checked = item.bought,
-                    onCheckedChange = {
+                    backdrop = liquidState,
+                    selected = { item.bought },
+                    onSelect = {
                         onItemBoughtChange(item.copy(bought = it))
                     },
-                    thumbContent = if (item.bought) {
-                        {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    } else {
-                        null
-                    }
+                    onDraggingChanged = { isToggleDragging = it }
                 )
 
                 Column(
@@ -184,11 +173,11 @@ fun ItemView(
                     }
                 }
 
-                ScaleButtonColumn(
+                LiquidButtonColumn(
                     modifier = Modifier
                         .padding(end = dimens.small3)
                         .size(dimens.medium4),
-                    liquidState = liquidState,
+                    backdrop = liquidState,
                     onClick = {
                         expanded = true
                     }
@@ -196,7 +185,6 @@ fun ItemView(
                     DropDown(
                         modifier = Modifier,
                         liquidState = liquidState,
-                        liquidParams = LiquidParams().copy(dispersion = 1f),
                         expanded = expanded,
                         onDismiss = {
                             expanded = false
@@ -216,8 +204,6 @@ fun ItemView(
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
-
-
             }
         }
     }
@@ -300,7 +286,7 @@ private fun ItemViewPreview1() {
 
             ItemView(
                 item = item,
-                liquidState = rememberLiquidState(),
+                liquidState = emptyBackdrop(),
                 onItemBoughtChange = { itemFrom ->
                     item = itemFrom
                 },
@@ -329,7 +315,7 @@ private fun ItemViewPreview2() {
 
             ItemView(
                 item = item,
-                liquidState = rememberLiquidState(),
+                liquidState = emptyBackdrop(),
                 onItemBoughtChange = { itemFrom ->
                     item = itemFrom
                 },

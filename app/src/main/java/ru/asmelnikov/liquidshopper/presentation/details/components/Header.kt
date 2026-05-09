@@ -44,20 +44,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.emptyBackdrop
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.rememberHazeState
-import io.github.fletchmckee.liquid.LiquidState
-import io.github.fletchmckee.liquid.rememberLiquidState
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.taskMock
 import ru.asmelnikov.liquidshopper.domain.models.taskWithItemsMock
 import ru.asmelnikov.liquidshopper.presentation.details.viewmodel.ItemsState
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonRow
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonRow
 import ru.asmelnikov.liquidshopper.utils.components.safeDrawingEndPaddingIfLandscape
 import java.util.UUID
 
@@ -66,7 +66,7 @@ fun SharedTransitionScope.Header(
     modifier: Modifier = Modifier,
     state: ItemsState,
     hazeState: HazeState,
-    liquidState: LiquidState,
+    liquidState: Backdrop,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onBackClick: () -> Unit,
     onItemsChangeStatusCall: () -> Unit
@@ -107,81 +107,81 @@ fun SharedTransitionScope.Header(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ScaleButtonBox(
+            LiquidButtonBox(
                 modifier = Modifier.size(dimens.medium5),
-                liquidState = liquidState,
-                onClick = onBackClick
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimens.medium4),
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "prev",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+                onClick = onBackClick,
+                backdrop = liquidState,
+                content = {
+                    Icon(
+                        modifier = Modifier.size(dimens.medium4),
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = "prev",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            )
             Spacer(modifier = Modifier.width(dimens.small3))
-            ScaleButtonBox(
+            LiquidButtonBox(
                 modifier = Modifier
                     .height(dimens.medium5)
                     .weight(1f),
-                liquidState = liquidState,
-                enabled = false,
-                onClick = {}
-            ) {
-                Text(
-                    modifier = Modifier
-                        .basicMarquee(Int.MAX_VALUE)
-                        .sharedElement(
-                            rememberSharedContentState(
-                                key = (state.task?.taskName ?: "") + state.task?.uid
-                            ),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween(durationMillis = 500)
-                            }
-                        )
-                        .padding(horizontal = dimens.small3),
-                    text = state.task?.taskName ?: "",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 3
-                )
-            }
-
-            Spacer(modifier = Modifier.width(dimens.small3))
-            androidx.compose.animation.AnimatedVisibility(
-                enter = scaleIn(),
-                exit = scaleOut(),
-                visible = state.task != null
-            ) {
-                ScaleButtonBox(
-                    modifier = Modifier.size(dimens.medium5),
-                    liquidState = liquidState,
-                    enabled = false,
-                    onClick = {}
-                ) {
-                    Icon(
+                onClick = {},
+                backdrop = liquidState,
+                content = {
+                    Text(
                         modifier = Modifier
+                            .basicMarquee(Int.MAX_VALUE)
                             .sharedElement(
                                 rememberSharedContentState(
-                                    key = (state.task?.taskType?.drawableRes
-                                        ?: 0) + (state.task?.uid ?: 0)
+                                    key = (state.task?.taskName ?: "") + state.task?.uid
                                 ),
                                 animatedVisibilityScope = animatedVisibilityScope,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = 500)
                                 }
                             )
-                            .size(dimens.medium4),
-                        painter = painterResource(
-                            state.task?.taskType?.drawableRes ?: R.string.category_other
-                        ),
-                        contentDescription = "type",
-                        tint = Color.Unspecified
+                            .padding(horizontal = dimens.small3),
+                        text = state.task?.taskName ?: "",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 3
                     )
                 }
+            )
+            Spacer(modifier = Modifier.width(dimens.small3))
+            androidx.compose.animation.AnimatedVisibility(
+                enter = scaleIn(),
+                exit = scaleOut(),
+                visible = state.task != null
+            ) {
+                LiquidButtonBox(
+                    modifier = Modifier.size(dimens.medium5),
+                    onClick = {},
+                    backdrop = liquidState,
+                    content = {
+                        Icon(
+                            modifier = Modifier
+                                .sharedElement(
+                                    rememberSharedContentState(
+                                        key = (state.task?.taskType?.drawableRes
+                                            ?: 0) + (state.task?.uid ?: 0)
+                                    ),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = 500)
+                                    }
+                                )
+                                .size(dimens.medium4),
+                            painter = painterResource(
+                                state.task?.taskType?.drawableRes ?: R.string.category_other
+                            ),
+                            contentDescription = "type",
+                            tint = Color.Unspecified
+                        )
+                    }
+                )
             }
         }
 
@@ -193,39 +193,39 @@ fun SharedTransitionScope.Header(
                 .safeDrawingEndPaddingIfLandscape(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            ScaleButtonRow(
+            LiquidButtonRow(
                 modifier = Modifier.width(dimens.regular),
-                liquidState = liquidState,
-                onClick = onItemsChangeStatusCall
-            ) {
-                AnimatedContent(targetState = state.task?.isCompleted == true) { isComp ->
-                    if (isComp) {
-                        Icon(
-                            modifier = Modifier
-                                .size(dimens.medium2),
-                            imageVector = Icons.Filled.Clear,
-                            contentDescription = "comp",
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    } else {
-                        Icon(
-                            modifier = Modifier
-                                .size(dimens.medium2),
-                            imageVector = Icons.Filled.Check,
-                            contentDescription = "comp",
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
+                onClick = onItemsChangeStatusCall,
+                backdrop = liquidState,
+                content = {
+                    AnimatedContent(targetState = state.task?.isCompleted == true) { isComp ->
+                        if (isComp) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(dimens.medium2),
+                                imageVector = Icons.Filled.Clear,
+                                contentDescription = "comp",
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        } else {
+                            Icon(
+                                modifier = Modifier
+                                    .size(dimens.medium2),
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = "comp",
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
                     }
+                    Text(
+                        modifier = Modifier.padding(horizontal = dimens.extraSmall2),
+                        text = stringResource(R.string.items_call),
+                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        maxLines = 1
+                    )
                 }
-                Text(
-                    modifier = Modifier.padding(horizontal = dimens.extraSmall2),
-                    text = stringResource(R.string.items_call),
-                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    maxLines = 1
-                )
-            }
+            )
             Spacer(modifier = Modifier.width(dimens.extraSmall2))
             Box(
                 modifier = Modifier
@@ -248,29 +248,29 @@ fun SharedTransitionScope.Header(
                 )
             }
             Spacer(modifier = Modifier.width(dimens.extraSmall2))
-            ScaleButtonBox(
+            LiquidButtonBox(
                 modifier = Modifier.width(dimens.regular),
-                liquidState = liquidState,
-                enabled = false,
-                onClick = {}
-            ) {
-                Text(
-                    modifier = Modifier
-                        .basicMarquee(Int.MAX_VALUE)
-                        .padding(horizontal = dimens.extraSmall2),
-                    text = "${state.task?.sumPrice ?: 0} ${stringResource(R.string.item_currency)}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    maxLines = 1
-                )
-                Icon(
-                    modifier = Modifier
-                        .size(dimens.medium2),
-                    imageVector = Icons.Filled.Clear,
-                    contentDescription = null,
-                    tint = Color.Transparent
-                )
-            }
+                onClick = {},
+                backdrop = liquidState,
+                content = {
+                    Text(
+                        modifier = Modifier
+                            .basicMarquee(Int.MAX_VALUE)
+                            .padding(horizontal = dimens.extraSmall2),
+                        text = "${state.task?.sumPrice ?: 0} ${stringResource(R.string.item_currency)}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        maxLines = 1
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .size(dimens.medium2),
+                        imageVector = Icons.Filled.Clear,
+                        contentDescription = null,
+                        tint = Color.Transparent
+                    )
+                }
+            )
         }
     }
 }
@@ -294,7 +294,7 @@ private fun HeaderPreview1() {
                         ),
                         animatedVisibilityScope = this@AnimatedVisibility,
                         hazeState = rememberHazeState(),
-                        liquidState = rememberLiquidState(),
+                        liquidState = emptyBackdrop(),
                         onItemsChangeStatusCall = {},
                         onBackClick = {}
                     )
@@ -323,7 +323,7 @@ private fun HeaderPreview2() {
                         ),
                         animatedVisibilityScope = this@AnimatedVisibility,
                         hazeState = rememberHazeState(),
-                        liquidState = rememberLiquidState(),
+                        liquidState = emptyBackdrop(),
                         onItemsChangeStatusCall = {},
                         onBackClick = {}
                     )

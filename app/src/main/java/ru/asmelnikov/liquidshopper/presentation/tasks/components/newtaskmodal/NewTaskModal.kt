@@ -31,14 +31,19 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import io.github.fletchmckee.liquid.LiquidState
+import androidx.compose.ui.unit.dp
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.effects.vibrancy
 import kotlinx.coroutines.launch
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.TaskTypes
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonRow
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksState
-import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonRow
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
 import ru.asmelnikov.liquidshopper.utils.components.EnumDropDown
 import java.time.LocalTime
@@ -49,8 +54,7 @@ fun NewTaskModal(
     modifier: Modifier = Modifier,
     state: TasksState,
     title: String,
-    liquidState: LiquidState,
-    liquidParams: LiquidParams = LiquidParams(),
+    liquidState: Backdrop,
     onDismissRequest: () -> Unit,
     onTitleChange: (String) -> Unit,
     onTypeChange: (TaskTypes) -> Unit,
@@ -61,7 +65,8 @@ fun NewTaskModal(
     if (state.isNewCreateModalShow) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         val scope = rememberCoroutineScope()
-
+        val bottomSheetBackdrop = rememberLayerBackdrop()
+        val sheetShape = MaterialTheme.shapes.extraLarge
         ModalBottomSheet(
             modifier = modifier,
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
@@ -82,7 +87,17 @@ fun NewTaskModal(
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .drawBackdrop(
+                        backdrop = liquidState,
+                        shape = { sheetShape },
+                        effects = {
+                            vibrancy()
+                            blur(4f.dp.toPx())
+                            lens(24f.dp.toPx(), 48f.dp.toPx(), true)
+                        },
+                        exportedBackdrop = bottomSheetBackdrop
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
@@ -91,27 +106,26 @@ fun NewTaskModal(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
                 ) {
-
-                    ScaleButtonBox(
-                        modifier = Modifier
-                            .padding(dimens.small1)
-                            .size(dimens.medium4),
-                        liquidState = liquidState,
-                        liquidParams = liquidParams,
+                    LiquidButtonBox(
                         onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
                                 if (!sheetState.isVisible) {
                                     onDismissRequest()
                                 }
                             }
+                        },
+                        backdrop = bottomSheetBackdrop,
+                        modifier = Modifier
+                            .padding(dimens.small1)
+                            .size(dimens.medium4),
+                        content = {
+                            Icon(
+                                modifier = Modifier.size(dimens.medium3),
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "close"
+                            )
                         }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(dimens.medium3),
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "close"
-                        )
-                    }
+                    )
                 }
 
                 Column(
@@ -162,35 +176,33 @@ fun NewTaskModal(
                     }
 
                     Spacer(modifier = Modifier.height(dimens.small3))
-
-                    ScaleButtonRow(
+                    LiquidButtonRow(
+                        onClick = {
+                            onTaskCreateConfirm()
+                        },
+                        backdrop = bottomSheetBackdrop,
                         modifier = Modifier
                             .padding(dimens.small1)
                             .navigationBarsPadding(),
-                        liquidState = liquidState,
-                        liquidParams = liquidParams,
-                        onClick = {
-                            onTaskCreateConfirm()
+                        content = {
+                            Icon(
+                                modifier = Modifier
+                                    .size(dimens.regular)
+                                    .padding(dimens.extraSmall2),
+                                imageVector = Icons.Filled.AddCircle,
+                                contentDescription = "add",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                            Text(
+                                modifier = Modifier.padding(end = dimens.small1),
+                                text = stringResource(R.string.task_create),
+                                style = MaterialTheme.typography.headlineSmall,
+                                maxLines = 1,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(dimens.regular)
-                                .padding(dimens.extraSmall2),
-                            imageVector = Icons.Filled.AddCircle,
-                            contentDescription = "add",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                        Text(
-                            modifier = Modifier.padding(end = dimens.small1),
-                            text = stringResource(R.string.task_create),
-                            style = MaterialTheme.typography.headlineSmall,
-                            maxLines = 1,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-
+                    )
                     Spacer(modifier = Modifier.height(dimens.small3))
                 }
             }

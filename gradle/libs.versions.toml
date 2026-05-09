@@ -1,35 +1,36 @@
 [versions]
-agp = "8.12.3"
+agp = "9.1.1"
+backdrop = "1.0.6"
 chartsPie = "2.2.0"
 constraintlayoutCompose = "1.1.1"
-datetimeWheelPicker = "1.1.0"
+datetimeWheelPicker = "1.3.0"
 haze = "1.7.2"
-kotlin = "2.3.10"
-coreKtx = "1.17.0"
+kotlin = "2.3.21"
+coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-kotlinxDatetime = "0.7.1"
+kotlinxDatetime = "0.8.0"
 lifecycleRuntimeKtx = "2.10.0"
-activityCompose = "1.12.4"
-composeBom = "2026.02.01"
+activityCompose = "1.13.0"
+composeBom = "2026.05.00"
 coreSplashscreen = "1.2.0"
-koin = "4.1.1"
+koin = "4.2.1"
 material3WindowSizeClass = "1.4.0"
 orbit = "11.0.0"
-nav3Core = "1.0.1"
+nav3Core = "1.1.1"
 lifecycleViewmodelNav3 = "2.10.0"
-kotlinSerialization = "2.3.10"
-kotlinxSerializationCore = "1.10.0"
-material3AdaptiveNav3 = "1.3.0-alpha09"
-liquid = "1.1.1"
-ksp = "2.3.5"
+kotlinSerialization = "2.3.21"
+kotlinxSerializationCore = "1.11.0"
+material3AdaptiveNav3 = "1.3.0-beta01"
+ksp = "2.3.6"
 room = "2.8.4"
-calendar = "2.10.0"
+calendar = "2.10.1"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+backdrop = { module = "io.github.kyant0:backdrop", version.ref = "backdrop" }
 charts-pie = { module = "io.github.dautovicharis:charts-pie", version.ref = "chartsPie" }
 datetime-wheel-picker = { module = "io.github.darkokoa:datetime-wheel-picker", version.ref = "datetimeWheelPicker" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
@@ -62,7 +63,6 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
-liquid = { module = "io.github.fletchmckee.liquid:liquid", version.ref = "liquid" }
 room = { module = "androidx.room:room-runtime", version.ref = "room"}
 room-codegen = { module = "androidx.room:room-compiler", version.ref = "room"}
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
@@ -71,7 +71,6 @@ calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calenda
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization"}
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

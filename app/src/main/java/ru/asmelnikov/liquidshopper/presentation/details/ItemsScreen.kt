@@ -32,10 +32,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import io.github.fletchmckee.liquid.liquefiable
-import io.github.fletchmckee.liquid.rememberLiquidState
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -51,9 +52,9 @@ import ru.asmelnikov.liquidshopper.presentation.details.viewmodel.ItemsState
 import ru.asmelnikov.liquidshopper.presentation.details.viewmodel.ItemsViewModel
 import ru.asmelnikov.liquidshopper.presentation.mainstate.MainAppState
 import ru.asmelnikov.liquidshopper.presentation.navigation.popUp
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
 import ru.asmelnikov.liquidshopper.utils.components.navigationBarsPaddingIfLandscape
 
 @Composable
@@ -133,13 +134,14 @@ fun SharedTransitionScope.ItemsScreenContent(
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val scrollState = rememberLazyListState()
-    val liquidState = rememberLiquidState()
+    val liquidState = rememberLayerBackdrop()
+    val listLiquidState = rememberLayerBackdrop()
     val hazeState = rememberHazeState()
 
     CreateItemModal(
         state = state,
         newItemName = newItemName,
-        liquidState = liquidState,
+        liquidState = rememberCombinedBackdrop(liquidState, listLiquidState),
         onDismissRequest = onDismissNewCreateRequest,
         onNewItemNameChange = onNewItemNameChange,
         onNewItemCountChange = onNewItemCountChange,
@@ -150,7 +152,7 @@ fun SharedTransitionScope.ItemsScreenContent(
 
     EditItemModal(
         state = state,
-        liquidState = liquidState,
+        liquidState = rememberCombinedBackdrop(liquidState, listLiquidState),
         onDismissRequest = onDismissEditModal,
         onEditConfirm = onEditConfirm
     )
@@ -160,7 +162,7 @@ fun SharedTransitionScope.ItemsScreenContent(
             painter = painterResource(state.background.drawableRes),
             contentDescription = null,
             modifier = Modifier
-                .liquefiable(liquidState)
+                .layerBackdrop(liquidState)
                 .hazeSource(state = hazeState)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
@@ -169,7 +171,7 @@ fun SharedTransitionScope.ItemsScreenContent(
 
         LazyColumn(
             modifier = Modifier
-                .liquefiable(liquidState)
+                .layerBackdrop(listLiquidState)
                 .fillMaxSize(),
             state = scrollState,
             verticalArrangement = Arrangement.spacedBy(26.dp)
@@ -209,23 +211,23 @@ fun SharedTransitionScope.ItemsScreenContent(
             }
         }
 
-
-        ScaleButtonBox(
+        LiquidButtonBox(
             modifier = Modifier
                 .navigationBarsPadding()
                 .align(Alignment.BottomEnd)
                 .padding(dimens.medium2)
                 .size(dimens.regular),
-            liquidState = liquidState,
-            onClick = onNewCreateModalShow
-        ) {
-            Icon(
-                modifier = Modifier.size(dimens.medium4),
-                imageVector = Icons.Filled.Add,
-                contentDescription = "add",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
+            onClick = onNewCreateModalShow,
+            backdrop = rememberCombinedBackdrop(liquidState, listLiquidState),
+            content = {
+                Icon(
+                    modifier = Modifier.size(dimens.medium4),
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "add",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        )
     }
 }
 

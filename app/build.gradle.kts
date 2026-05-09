@@ -4,7 +4,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.ksp)
@@ -29,14 +28,14 @@ android {
     }
 
     namespace = "ru.asmelnikov.liquidshopper"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "ru.asmelnikov.liquidshopper"
         minSdk = 33
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 4
-        versionName = "2.2"
+        versionName = "2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -51,32 +50,36 @@ android {
         }
     }
 
-    applicationVariants.all {
-        val variant = this
-        outputs.all {
-            val outputImpl = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            val baseName = "LiquidShopper"
-            val buildType = variant.buildType.name
-            val fileName = "${baseName}-${buildType}-" +
-                    "v${defaultConfig.versionName}-" +
-                    "vc${defaultConfig.versionCode}-" +
-                    "${getDateTimeFormat()}.apk"
-
-            outputImpl.outputFileName = fileName
-        }
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-        }
-    }
+
     buildFeatures {
         compose = true
+    }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.forEach { output ->
+            if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
+                val baseName = "LiquidShopper"
+                val buildType = variant.buildType.orEmpty()
+                val fileName = "${baseName}-${buildType}-" +
+                        "v${android.defaultConfig.versionName}-" +
+                        "vc${android.defaultConfig.versionCode}-" +
+                        "${getDateTimeFormat()}.apk"
+
+                output.outputFileName.set(fileName)
+            }
+        }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
 }
 
@@ -119,8 +122,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
 
     // liquid
-    implementation(libs.liquid)
     implementation(libs.haze)
+    implementation(libs.backdrop)
 
     // room
     implementation(libs.room)

@@ -27,6 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.util.fastMap
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -34,8 +36,6 @@ import io.github.dautovicharis.charts.PieChart
 import io.github.dautovicharis.charts.model.toChartDataSet
 import io.github.dautovicharis.charts.style.PieChartDefaults
 import io.github.dautovicharis.charts.style.PieChartStyle
-import io.github.fletchmckee.liquid.liquefiable
-import io.github.fletchmckee.liquid.rememberLiquidState
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 import ru.asmelnikov.liquidshopper.R
@@ -85,7 +85,8 @@ fun StatisticsScreenContent(
     onConfirmChosenPeriod: (LocalDate, LocalDate) -> Unit
 ) {
 
-    val liquidState = rememberLiquidState()
+    val liquidState = rememberLayerBackdrop()
+    val listLiquidState = rememberLayerBackdrop()
     val hazeState = rememberHazeState()
 
     PeriodPickerDialog(
@@ -101,7 +102,7 @@ fun StatisticsScreenContent(
             painter = painterResource(state.background.drawableRes),
             contentDescription = null,
             modifier = Modifier
-                .liquefiable(liquidState)
+                .layerBackdrop(liquidState)
                 .hazeSource(state = hazeState)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
@@ -110,7 +111,7 @@ fun StatisticsScreenContent(
 
         LazyColumn(
             modifier = Modifier
-                .liquefiable(liquidState)
+                .layerBackdrop(listLiquidState)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(dimens.medium1)
         ) {

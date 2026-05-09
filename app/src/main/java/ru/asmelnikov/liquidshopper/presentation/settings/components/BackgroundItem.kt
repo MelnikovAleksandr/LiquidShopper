@@ -29,15 +29,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.fletchmckee.liquid.liquefiable
-import io.github.fletchmckee.liquid.liquid
-import io.github.fletchmckee.liquid.rememberLiquidState
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.Background
 import ru.asmelnikov.liquidshopper.domain.models.BackgroundImage
 import ru.asmelnikov.liquidshopper.domain.models.Screens
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
 
 @Composable
 fun BackgroundItem(
@@ -50,7 +50,7 @@ fun BackgroundItem(
         mutableStateOf(false)
     }
 
-    val liquidState = rememberLiquidState()
+    val liquidState = rememberLayerBackdrop()
 
 
     Box(
@@ -68,26 +68,26 @@ fun BackgroundItem(
             painter = painterResource(background.data.drawableRes),
             contentDescription = null,
             modifier = Modifier
-                .liquefiable(liquidState)
+                .layerBackdrop(liquidState)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             contentScale = ContentScale.Crop
         )
-
-        Box(
+        LiquidButtonBox(
+            onClick = {},
+            backdrop = liquidState,
             modifier = Modifier
                 .padding(dimens.extraSmall2)
-                .align(Alignment.TopCenter)
-                .liquid(liquidState),
-        ) {
-            Text(
-                modifier = Modifier.padding(dimens.extraSmall1),
-                text = stringResource(background.screen.stringRes),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-
+                .align(Alignment.TopCenter),
+            content = {
+                Text(
+                    modifier = Modifier.padding(dimens.extraSmall1),
+                    text = stringResource(background.screen.stringRes),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        )
         DropdownMenu(
             expanded = isContextMenuVisible,
             containerColor = MaterialTheme.colorScheme.background,
@@ -127,7 +127,7 @@ fun BackgroundItem(
 @Composable
 private fun BackgroundItemPreview() {
     LiquidShopperTheme(darkTheme = true) {
-        val liquidState = rememberLiquidState()
+        val liquidState = rememberLayerBackdrop()
         Box(
             modifier = Modifier
                 .size(400.dp)
@@ -139,7 +139,7 @@ private fun BackgroundItemPreview() {
                 painter = painterResource(R.drawable.background_pattern_1),
                 contentDescription = null,
                 modifier = Modifier
-                    .liquefiable(liquidState)
+                    .layerBackdrop(liquidState)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
                 contentScale = ContentScale.Crop

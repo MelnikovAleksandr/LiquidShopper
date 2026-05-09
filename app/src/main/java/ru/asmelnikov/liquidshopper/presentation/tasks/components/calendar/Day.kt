@@ -37,9 +37,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
-import io.github.fletchmckee.liquid.LiquidState
-import io.github.fletchmckee.liquid.liquefiable
-import io.github.fletchmckee.liquid.rememberLiquidState
+import com.kyant.backdrop.backdrops.LayerBackdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.GroupedTasksByDay
 import ru.asmelnikov.liquidshopper.domain.models.taskMock
@@ -54,7 +54,7 @@ fun Day(
     modifier: Modifier = Modifier,
     day: CalendarDay,
     groupedTasks: GroupedTasksByDay?,
-    liquidState: LiquidState,
+    liquidState: LayerBackdrop,
     onClick: (LocalDate) -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
@@ -69,7 +69,7 @@ fun Day(
     }
     Box(
         modifier = modifier
-            .liquefiable(liquidState)
+            .layerBackdrop(liquidState)
             .aspectRatio(1f)
             .fillMaxSize()
             .clickable(
@@ -175,12 +175,12 @@ fun TasksLineIndicator(
 @Composable
 private fun DayPreview() {
     LiquidShopperTheme(darkTheme = true) {
-        val liquidState = rememberLiquidState()
+        val liquidState = rememberLayerBackdrop()
         Image(
             painter = painterResource(R.drawable.background_pattern_1),
             contentDescription = null,
             modifier = Modifier
-                .liquefiable(liquidState)
+                .layerBackdrop(liquidState)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             contentScale = ContentScale.Crop

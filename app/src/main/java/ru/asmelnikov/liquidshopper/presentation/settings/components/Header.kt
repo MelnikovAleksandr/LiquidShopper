@@ -30,25 +30,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import io.github.fletchmckee.liquid.LiquidState
-import io.github.fletchmckee.liquid.liquefiable
-import io.github.fletchmckee.liquid.rememberLiquidState
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
 import ru.asmelnikov.liquidshopper.presentation.theme.dimens
-import ru.asmelnikov.liquidshopper.utils.components.ScaleButtonBox
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidButtonBox
 import ru.asmelnikov.liquidshopper.utils.components.safeDrawingEndPaddingIfLandscape
 
 @Composable
 fun Header(
     modifier: Modifier = Modifier,
     hazeState: HazeState,
-    liquidState: LiquidState,
+    liquidState: Backdrop,
     onBackClick: () -> Unit
 ) {
 
@@ -67,54 +67,54 @@ fun Header(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ScaleButtonBox(
+            LiquidButtonBox(
+                onClick = onBackClick,
+                backdrop = liquidState,
                 modifier = Modifier.size(dimens.medium5),
-                liquidState = liquidState,
-                onClick = onBackClick
-            ) {
-                Icon(
-                    modifier = Modifier.size(dimens.medium4),
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "prev",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+                content = {
+                    Icon(
+                        modifier = Modifier.size(dimens.medium4),
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = "prev",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            )
             Spacer(modifier = Modifier.width(dimens.small3))
-            ScaleButtonBox(
+            LiquidButtonBox(
+                onClick = {},
+                backdrop = liquidState,
                 modifier = Modifier
                     .height(dimens.medium5)
                     .weight(1f),
-                liquidState = liquidState,
-                enabled = false,
-                onClick = {}
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = dimens.small3),
-                    text = stringResource(R.string.settings_title),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 3
-                )
-            }
-
+                content = {
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = dimens.small3),
+                        text = stringResource(R.string.settings_title),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 3
+                    )
+                }
+            )
             Spacer(modifier = Modifier.width(dimens.small3))
-            ScaleButtonBox(
+            LiquidButtonBox(
+                onClick = {},
+                backdrop = liquidState,
                 modifier = Modifier.size(dimens.medium5),
-                liquidState = liquidState,
-                enabled = false,
-                onClick = {}
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(dimens.medium4),
-                    painter = painterResource(R.drawable.settings_colored_icon),
-                    contentDescription = "type",
-                    tint = Color.Unspecified
-                )
-            }
+                content = {
+                    Icon(
+                        modifier = Modifier
+                            .size(dimens.medium4),
+                        painter = painterResource(R.drawable.settings_colored_icon),
+                        contentDescription = "type",
+                        tint = Color.Unspecified
+                    )
+                }
+            )
         }
     }
 
@@ -124,7 +124,7 @@ fun Header(
 @Composable
 private fun HeaderPreview() {
     LiquidShopperTheme {
-        val liquidState = rememberLiquidState()
+        val liquidState = rememberLayerBackdrop()
         val hazeState = rememberHazeState()
         Box(
             modifier = Modifier
@@ -137,7 +137,7 @@ private fun HeaderPreview() {
                 painter = painterResource(R.drawable.background_pattern_1),
                 contentDescription = null,
                 modifier = Modifier
-                    .liquefiable(liquidState)
+                    .layerBackdrop(liquidState)
                     .hazeSource(state = hazeState)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),

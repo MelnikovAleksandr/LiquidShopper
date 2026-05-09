@@ -46,13 +46,13 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import com.kizitonwose.calendar.core.yearMonth
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberCombinedBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import io.github.fletchmckee.liquid.liquefiable
-import io.github.fletchmckee.liquid.liquid
-import io.github.fletchmckee.liquid.rememberLiquidState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -76,8 +76,8 @@ import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksSideEffects
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksState
 import ru.asmelnikov.liquidshopper.presentation.tasks.viewmodel.TasksViewModel
 import ru.asmelnikov.liquidshopper.presentation.theme.LiquidShopperTheme
-import ru.asmelnikov.liquidshopper.utils.components.LiquidParams
 import ru.asmelnikov.liquidshopper.utils.components.isPortrait
+import ru.asmelnikov.liquidshopper.utils.components.liquid.LiquidBox
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -174,8 +174,10 @@ fun SharedTransitionScope.TasksScreenContent(
     isPortrait: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
+
+    val liquidState = rememberLayerBackdrop()
+    val listLiquidState = rememberLayerBackdrop()
     val scrollState = rememberLazyListState()
-    val liquidState = rememberLiquidState()
     val hazeState = rememberHazeState()
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(300) }
@@ -209,7 +211,7 @@ fun SharedTransitionScope.TasksScreenContent(
         modifier = Modifier,
         state = state,
         onDismissRequest = onDismissMonthDialog,
-        liquidState = liquidState,
+        liquidState = rememberCombinedBackdrop(liquidState, listLiquidState),
         chosenMonth = { date ->
             coroutineScope.launch {
                 calendarState.animateScrollToMonth(date.yearMonth)
@@ -221,7 +223,7 @@ fun SharedTransitionScope.TasksScreenContent(
     NewTaskModal(
         state = state,
         title = title,
-        liquidState = liquidState,
+        liquidState = rememberCombinedBackdrop(liquidState, listLiquidState),
         onTypeChange = onTypeChange,
         onDismissRequest = onDismissModal,
         onTitleChange = onTitleChange,
@@ -232,7 +234,7 @@ fun SharedTransitionScope.TasksScreenContent(
     EditTaskModal(
         state = state,
         editTitle = editTitle,
-        liquidState = liquidState,
+        liquidState = rememberCombinedBackdrop(liquidState, listLiquidState),
         onDismissRequest = onDismissEditRequest,
         onTitleChange = onEditTitleChange,
         onTypeChange = onEditTypeChange,
@@ -246,7 +248,7 @@ fun SharedTransitionScope.TasksScreenContent(
             painter = painterResource(state.background.drawableRes),
             contentDescription = null,
             modifier = Modifier
-                .liquefiable(liquidState)
+                .layerBackdrop(liquidState)
                 .hazeSource(state = hazeState)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
@@ -303,6 +305,7 @@ fun SharedTransitionScope.TasksScreenContent(
                             contentHeightMode = ContentHeightMode.Fill,
                             state = calendarState,
                             dayContent = { day ->
+                                val dayLiquidState = rememberLayerBackdrop()
                                 var currentDayTasks by remember {
                                     mutableStateOf<GroupedTasksByDay?>(
                                         null
@@ -325,26 +328,21 @@ fun SharedTransitionScope.TasksScreenContent(
                                     day = day,
                                     groupedTasks = currentDayTasks,
                                     onClick = onSelectedDayChange,
-                                    liquidState = liquidState
+                                    liquidState = dayLiquidState
                                 )
                                 androidx.compose.animation.AnimatedVisibility(
                                     modifier = Modifier.align(Alignment.Center),
                                     enter = scaleIn(),
                                     exit = scaleOut(),
-                                    visible = day.date == state.selectedDay
+                                    visible = day.date == state.selectedDay && day.position == DayPosition.MonthDate
                                 ) {
-                                    Box(
+                                    LiquidBox(
+                                        backdrop = rememberCombinedBackdrop(liquidState, dayLiquidState),
                                         modifier = Modifier
                                             .aspectRatio(1f)
                                             .fillMaxSize()
-                                            .clip(MaterialTheme.shapes.large)
-                                            .liquid(
-                                                liquidState, LiquidParams(
-                                                    refraction = 0.3f,
-                                                    edge = 0.2f,
-                                                    shape = MaterialTheme.shapes.large
-                                                ).invoke()
-                                            )
+                                            .clip(MaterialTheme.shapes.large),
+                                        content = {}
                                     )
                                 }
                             }
@@ -353,6 +351,7 @@ fun SharedTransitionScope.TasksScreenContent(
                     TasksList(
                         liquidState = liquidState,
                         scrollState = scrollState,
+                        listLiquidState = listLiquidState,
                         hazeState = hazeState,
                         state = state,
                         animatedVisibilityScope = animatedVisibilityScope,
@@ -403,6 +402,7 @@ fun SharedTransitionScope.TasksScreenContent(
                                 contentHeightMode = ContentHeightMode.Fill,
                                 state = calendarState,
                                 dayContent = { day ->
+                                    val dayLiquidState = rememberLayerBackdrop()
                                     var currentDayTasks by remember {
                                         mutableStateOf<GroupedTasksByDay?>(
                                             null
@@ -425,7 +425,7 @@ fun SharedTransitionScope.TasksScreenContent(
                                         day = day,
                                         groupedTasks = currentDayTasks,
                                         onClick = onSelectedDayChange,
-                                        liquidState = liquidState
+                                        liquidState = dayLiquidState
                                     )
                                     androidx.compose.animation.AnimatedVisibility(
                                         modifier = Modifier.align(Alignment.Center),
@@ -433,18 +433,13 @@ fun SharedTransitionScope.TasksScreenContent(
                                         exit = scaleOut(),
                                         visible = day.date == state.selectedDay && day.position == DayPosition.MonthDate
                                     ) {
-                                        Box(
+                                        LiquidBox(
+                                            backdrop = rememberCombinedBackdrop(liquidState, dayLiquidState),
                                             modifier = Modifier
                                                 .aspectRatio(1f)
                                                 .fillMaxSize()
-                                                .clip(MaterialTheme.shapes.large)
-                                                .liquid(
-                                                    liquidState, LiquidParams(
-                                                        refraction = 0.3f,
-                                                        edge = 0.2f,
-                                                        shape = MaterialTheme.shapes.large
-                                                    ).invoke()
-                                                )
+                                                .clip(MaterialTheme.shapes.large),
+                                            content = {}
                                         )
                                     }
                                 }
@@ -455,6 +450,7 @@ fun SharedTransitionScope.TasksScreenContent(
                         modifier = Modifier
                             .weight(1f),
                         liquidState = liquidState,
+                        listLiquidState = listLiquidState,
                         scrollState = scrollState,
                         hazeState = hazeState,
                         state = state,
@@ -472,7 +468,7 @@ fun SharedTransitionScope.TasksScreenContent(
         MultiButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd),
-            liquidState = liquidState,
+            liquidState = rememberCombinedBackdrop(liquidState, listLiquidState),
             onCreateClick = onCreateClick,
             onSettingsClick = onSettingsClick,
             onStatisticsClick = onStatisticsClick

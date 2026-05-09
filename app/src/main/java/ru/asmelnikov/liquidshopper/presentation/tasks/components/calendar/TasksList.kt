@@ -31,12 +31,12 @@ import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import com.kyant.backdrop.backdrops.LayerBackdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
-import io.github.fletchmckee.liquid.LiquidState
-import io.github.fletchmckee.liquid.liquefiable
 import ru.asmelnikov.liquidshopper.R
 import ru.asmelnikov.liquidshopper.domain.models.GroupedTasksByDay
 import ru.asmelnikov.liquidshopper.domain.models.Task
@@ -49,7 +49,8 @@ import ru.asmelnikov.liquidshopper.utils.datetime.toDayMonthString
 @Composable
 fun SharedTransitionScope.TasksList(
     modifier: Modifier = Modifier,
-    liquidState: LiquidState,
+    liquidState: LayerBackdrop,
+    listLiquidState: LayerBackdrop,
     scrollState: LazyListState,
     hazeState: HazeState,
     state: TasksState,
@@ -63,8 +64,8 @@ fun SharedTransitionScope.TasksList(
 
     LazyColumn(
         modifier = modifier
-            .liquefiable(liquidState)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .layerBackdrop(listLiquidState),
         state = scrollState,
         verticalArrangement = Arrangement.spacedBy(26.dp)
     ) {
@@ -117,7 +118,7 @@ fun SharedTransitionScope.TasksList(
                 )
             }
         } else {
-            items(items = selectedDayTasks?.tasks ?: emptyList(), key = { it.uid }) { task ->
+            items(items = selectedDayTasks.tasks, key = { it.uid }) { task ->
                 TaskCard(
                     modifier = Modifier
                         .navigationBarsPaddingIfLandscape()
@@ -131,6 +132,7 @@ fun SharedTransitionScope.TasksList(
                         )
                         .hazeSource(state = hazeState),
                     liquidState = liquidState,
+                    listLiquidState = listLiquidState,
                     task = task,
                     animatedVisibilityScope = animatedVisibilityScope,
                     onShareTask = onShareTask,

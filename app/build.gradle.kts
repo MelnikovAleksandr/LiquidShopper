@@ -34,7 +34,7 @@ android {
         applicationId = "ru.asmelnikov.liquidshopper"
         minSdk = 33
         targetSdk = 37
-        versionCode = 4
+        versionCode = 5
         versionName = "2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

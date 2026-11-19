@@ -334,6 +334,7 @@ fun LiquidBox(
                     vibrancy()
                     lens(12f.dp.toPx(), 24f.dp.toPx())
                 },
+                shadow = null,
                 onDrawSurface = {}
             ),
         contentAlignment = Alignment.Center,

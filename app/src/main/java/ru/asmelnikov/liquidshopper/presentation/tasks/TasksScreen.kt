@@ -32,7 +32,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -340,8 +339,7 @@ fun SharedTransitionScope.TasksScreenContent(
                                         backdrop = rememberCombinedBackdrop(liquidState, dayLiquidState),
                                         modifier = Modifier
                                             .aspectRatio(1f)
-                                            .fillMaxSize()
-                                            .clip(MaterialTheme.shapes.large),
+                                            .fillMaxSize(),
                                         content = {}
                                     )
                                 }
@@ -437,8 +435,7 @@ fun SharedTransitionScope.TasksScreenContent(
                                             backdrop = rememberCombinedBackdrop(liquidState, dayLiquidState),
                                             modifier = Modifier
                                                 .aspectRatio(1f)
-                                                .fillMaxSize()
-                                                .clip(MaterialTheme.shapes.large),
+                                                .fillMaxSize(),
                                             content = {}
                                         )
                                     }

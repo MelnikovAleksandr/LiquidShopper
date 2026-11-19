@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">Шоппер</string>
+
+    <!--    TasksScreen-->
+    <string name="edit_task_drop_down">Изменить</string>
+    <string name="delete_task_drop_down">Удалить</string>
+    <string name="task_placeholder">Введите название списка</string>
+    <string name="task_edit_placeholder">Измените название списка</string>
+    <string name="task_title_error">Не более %1$s символов</string>
+    <string name="task_create">Создать</string>
+    <string name="task_update">Изменить</string>
+    <string name="empty_tasks">Тут пока ничего нет, создайте список кнопкой</string>
+    <string name="date_dismiss">Отмена</string>
+    <string name="date_confirm">Выбрать</string>
+    <string name="shared_list">Поделиться списком покупок</string>
+    <string name="shared_list_title">Список покупок :</string>
+    <string name="empty" />
+
+    <!--    ItemsScreen-->
+    <string name="item_placeholder">Введите название покупки</string>
+    <string name="item_price">Стоимость ₽</string>
+    <string name="item_edit_placeholder">Измените название покупки</string>
+    <string name="item_create">Добавить</string>
+    <string name="item_update">Изменить</string>
+    <string name="item_currency">₽</string>
+    <string name="items_call">Все</string>
+    <string name="items_delete">%1$s удалено</string>
+    <string name="items_delete_recall">ВОССТАНОВИТЬ?</string>
+
+    <!--    SettingsScreen-->
+    <string name="settings_title">Настройте тему оформления</string>
+    <string name="main_screen">Календарь</string>
+    <string name="details_screen">Список</string>
+    <string name="settings_screen">Настройки</string>
+    <string name="statistics_screen">Статистика</string>
+
+    <!--    StatisticsScreen-->
+    <string name="pie_title">Расходы</string>
+    <string name="stats_clear">Очистить</string>
+    <string name="stats_dismiss">Отмена</string>
+    <string name="stats_confirm">Выбрать</string>
+    <string name="stats_empty">В выбранный период нет статистики, пожалуйста попробуйте другой диапазон дат</string>
+
+    <!--    Categories-->
+    <string name="category_pharmacy">Аптека</string>
+    <string name="category_alcohol">Алкоголь</string>
+    <string name="category_groceries">Продукты</string>
+    <string name="category_supermarket">Супермаркет</string>
+    <string name="category_cosmetics">Косметика</string>
+    <string name="category_household">Хозяйственный</string>
+    <string name="category_pets">Питомцы</string>
+    <string name="category_garden">Сад-огород</string>
+    <string name="category_clothing">Одежда</string>
+    <string name="category_books">Книги</string>
+    <string name="category_tools">Инструменты</string>
+    <string name="category_delivery">Доставка</string>
+    <string name="category_appliances">Бытовая техника</string>
+    <string name="category_furniture">Мебель</string>
+    <string name="category_sports">Спорт</string>
+    <string name="category_children">Для детей</string>
+    <string name="category_automotive">Автомобиль</string>
+    <string name="category_other">Прочее</string>
+
+    <!--    Units-->
+    <string name="unit_pcs">ШТ</string>
+    <string name="unit_kg">КГ</string>
+    <string name="unit_g">ГР</string>
+    <string name="unit_t">ТН</string>
+    <string name="unit_l">Л</string>
+    <string name="unit_ml">МЛ</string>
+    <string name="unit_bottle">БУТ</string>
+    <string name="unit_pack">УП</string>
+    <string name="unit_box">КОР</string>
+    <string name="unit_packet">ПАЧ</string>
+    <string name="unit_set">НАБ</string>
+    <string name="unit_pair">ПАР</string>
+    <string name="unit_sheet">ЛИСТ</string>
+    <string name="unit_roll">РУЛ</string>
+    <string name="unit_m">М</string>
+    <string name="unit_m2">М2</string>
+    <string name="unit_m3">М3</string>
+    <string name="unit_cm">СМ</string>
+    <string name="unit_cm2">СМ2</string>
+    <string name="unit_cm3">СМ3</string>
+    <string name="unit_linear_m">ПГ М</string>
+    <string name="unit_hour">Ч</string>
+    <string name="unit_day">СУТ</string>
+    <string name="unit_minute">МИН</string>
+</resources>
